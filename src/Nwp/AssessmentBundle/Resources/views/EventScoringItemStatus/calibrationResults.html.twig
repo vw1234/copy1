@@ -1,0 +1,197 @@
+{% extends 'NwpAssessmentBundle::layout.html.twig' %}
+{% block title %}
+{{ parent() }} - Calibration - Results {{ 'views.new.creation'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}
+{% endblock %}
+{% block page %}
+{% block javascript %}
+<script>
+$(document).ready(function () {
+  $(".disable").one('click',function(e){
+    $(this).attr('disabled', true);
+    $(this).on('click',function(ev){ //link can only be clicked once (prevents subsequent clicks)
+      ev.preventDefault();
+    });  
+  });
+});
+</script>
+{% endblock %}
+{% if calibration_results.scoring_item_id is defined%}
+
+<h3 class="title">Calibration Results, Paper ID {{calibration_results.scoring_item_id}}</h3>
+
+{% if (user_role_id!=role_table_leader_id) and (user_role_id!=role_room_leader_id)  %}
+    
+   
+<table width="160" class="table-striped tableleft">
+    <thead><tr><th ><h4 class="header">My Scores</h4></th></tr></thead>
+   {% for score in scores %}
+            <tr>   
+                <td>{{ score.scoringRubricAttribute}}: </td>
+                <td><strong>{{ score.score}}</strong></td>  
+            </tr>
+    {% endfor %}         
+</table>
+{% endif %}
+
+ 
+<table width="160" class="table-striped tableright">
+   <thead><tr><th ><h4 class="header">Correct Scores</h4></th></tr></thead>
+   {% for correct_score in correct_scores %}
+            <tr>   
+                <td>{{ correct_score.scoringRubricAttribute}}: </td>
+                <td><strong>{{ correct_score.score}}</strong></td>  
+            </tr>
+    {% endfor %}         
+</table>
+<hr class="horizontal-line">
+ </br>
+{% for key, g in grade_level_array %}
+    <h4 class="header">Tally of Scores, {{g.grade_level_name}} Room </h4>
+    <h5 class="header">Scorers = {{calibration_results[key].total}}</h5>
+    <table width="60%" class="table-condensed table-striped table-fixed">
+     <thead>
+        <tr>
+            <th>Score Point:</th>
+            {% for sc in scoring_scale %}
+                <th>{{sc}}</th>
+            {%  endfor %}
+          
+        </tr>
+        <tr><td></td><td colspan="{{scoring_scale|length}}"><hr class="horizontal-line" style="margin-top: 0px;margin-bottom: 0px;width:100%;"></td></tr>
+    </thead>
+    <tbody>
+     {% for attribute in attributes %}     
+              <tr><td>  {{ attribute.attribute.name }}</td>
+                   
+              {% for sc in scoring_scale %}
+                    {% set tally_correct=false %}
+                    
+                       
+                        {% for correct_score in correct_scores %}
+                            {% if correct_score.scoringRubricAttribute==attribute.attribute.name and correct_score.score==sc%}
+                                {% set tally_correct=true %}
+                            {% endif %}
+                       {% endfor %}
+                      
+                       {% if tally_correct==true%}
+                            {% if calibration_results[key][attribute.id][sc].number_of_scorers is defined%}
+                                <td  class="highlight" style="text-align:center"><strong>{{calibration_results[key][attribute.id][sc].number_of_scorers}}</strong></td>
+                            {% else %}
+                                <td  class="highlight" style="text-align:center">-</td>    
+                            {% endif %}    
+                       {% else %}
+                            {% if calibration_results[key][attribute.id][sc].number_of_scorers is defined%}
+                                 <td  style="text-align:center"> {{calibration_results[key][attribute.id][sc].number_of_scorers}}</td>
+                            {% else %}
+                                <td  style="text-align:center">-</td>    
+                            {% endif %} 
+                       {% endif %} 
+                                
+                {% endfor %}
+              </tr>
+            {% endfor %}
+    </tbody>
+    </table>
+    {% if grade_level_array|length > 0 %}
+        </br>
+        <div> Correct score points are highlighted in <span class="highlight">green shading</span>.</div>
+        </br>
+    {% endif %}
+ {% endfor %}
+ {% if ((user_role_id !=role_scorer1_id) and (user_role_id !=role_scorer2_id) and (user_role_id !=role_table_leader_id))%}    
+{% for key, g in grade_level_array %}
+    {% for t in 1..max_table_array[key].max_table_number %}
+        <h4 class="header">Individual Scores, {{g.grade_level_name}} Room, Table {{t}} </h4>
+            <table width="60%" class="table-condensed table-striped table-fixed">
+                <thead>
+                    <tr>
+                        <th></th>
+                            {% for attribute in attributes %}
+                                <th>{{ attribute.attribute.name }}</th>
+                            {%  endfor %}
+          
+                    </tr>
+                     <tr><td></td><td colspan="{{attributes|length}}"><hr class="horizontal-line" style="margin-top: 0px;margin-bottom: 0px;width:100%;"></td></tr>
+                </thead>
+            <tbody>
+                 {% if calibration_results_by_user[key][t] is defined%}
+                {% for user_id, cu in calibration_results_by_user[key][t] %}
+                    <tr>
+                      <td>{{calibration_results_by_user[key][t][user_id][0].fullname}}</td> 
+                      {% for attribute in attributes %}
+                         {% set tally_correct=false %}
+                         {% for correct_score in correct_scores %}
+                            {% if correct_score.scoringRubricAttribute==attribute.attribute.name and correct_score.score==calibration_results_by_user[key][t][user_id][attribute.id].score%}
+                                {% set tally_correct=true %}
+                            {% endif %}
+                       {% endfor %}
+                      {% if tally_correct==true%}
+                                <td  class="span1 highlight" style="text-align:center"><strong>{{calibration_results_by_user[key][t][user_id][attribute.id].score}}</strong></td>
+                       {% else %}
+                                 <td  style="text-align:center"> {{calibration_results_by_user[key][t][user_id][attribute.id].score}}</td>
+                       {% endif %} 
+                     
+                      {%  endfor %} 
+                     </tr>
+                 {%  endfor %} 
+                    {%  endif %}
+            </tbody>
+            </table>
+        </br>
+         <div> Correct score points are highlighted in <span class="highlight">green shading</span>.</div>
+         </br></br>
+     {% endfor %} 
+    {% endfor %}
+  {% elseif (user_role_id ==role_table_leader_id)%}
+          <h4 class="header">Individual Scores, {{grade_level_array[user_grade_level_id]['grade_level_name']}} Room, Table {{user_table_id}} </h4>
+         <table width="60%" class="table-condensed table-striped table-fixed">
+                <thead>
+                    <tr>
+                        <th></th>
+                            {% for attribute in attributes %}
+                                <th>{{ attribute.attribute.name }}</th>
+                            {%  endfor %}
+          
+                    </tr>
+                     <tr><td></td><td colspan="{{attributes|length}}"><hr class="horizontal-line" style="margin-top: 0px;margin-bottom: 0px;width:100%;"></td></tr>
+                </thead>
+            <tbody>
+                 {% if calibration_results_by_user[user_grade_level_id][user_table_id] is defined%}
+                {% for user_id, cu in calibration_results_by_user[user_grade_level_id][user_table_id] %}
+                    <tr>
+                      <td>{{calibration_results_by_user[user_grade_level_id][user_table_id][user_id][0].fullname}}</td> 
+                      {% for attribute in attributes %}
+                         {% set tally_correct=false %}
+                         {% for correct_score in correct_scores %}
+                            {% if correct_score.scoringRubricAttribute==attribute.attribute.name and correct_score.score==calibration_results_by_user[user_grade_level_id][user_table_id][user_id][attribute.id].score%}
+                                {% set tally_correct=true %}
+                            {% endif %}
+                       {% endfor %}
+                      {% if tally_correct==true%}
+                                <td  class="span1 highlight" style="text-align:center"><strong>{{calibration_results_by_user[user_grade_level_id][user_table_id][user_id][attribute.id].score}}</strong></td>
+                       {% else %}
+                                 <td  style="text-align:center"> {{calibration_results_by_user[user_grade_level_id][user_table_id][user_id][attribute.id].score}}</td>
+                       {% endif %} 
+                     
+                      {%  endfor %} 
+                     </tr>
+                 {%  endfor %} 
+                    {%  endif %}
+            </tbody>
+            </table>
+          </br>
+         <div> Correct score points are highlighted in <span class="highlight">green shading</span>.</div>
+         </br></br>
+  {% endif %} 
+{% else %}
+     <h3 class="title">Calibration Results not available</h3>
+{% endif%}
+</br>
+<div class="float-left">
+    <a class="btn" href="{{ path('eventsite_calibration') }}">{{ 'views.recordactions.backtothecalibration'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}</a>
+    &nbsp;&nbsp;&nbsp;
+    {% if calibration_results.event_scoring_item_id is defined%}
+        <a class="btn"  href="{{ path('eventsite_calibration_commentary', { 'id': calibration_results.event_scoring_item_id }) }}">Explanation</a> 
+    {% endif %}
+</div>
+{% endblock %}

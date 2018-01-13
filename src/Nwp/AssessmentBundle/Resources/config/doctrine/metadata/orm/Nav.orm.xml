@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="Nav" table="nav">
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="name" type="string" column="name" length="30" nullable="false"/>
+    <field name="path" type="string" column="path" length="100" nullable="true"/>
+    <field name="levelId" type="integer" column="level_id" nullable="true"/>
+    <field name="parentId" type="integer" column="parent_id" nullable="true"/>
+    <field name="orderId" type="integer" column="order_id" nullable="true"/>
+    <field name="isActive" type="boolean" column="is_active" nullable="false"/>
+    <many-to-one field="structure" target-entity="Structure">
+      <join-columns>
+        <join-column name="structure_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="entity" target-entity="SystemEntity">
+      <join-columns>
+        <join-column name="entity_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="action" target-entity="SystemAction">
+      <join-columns>
+        <join-column name="action_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>

@@ -1,0 +1,29 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Fine Uploader - jQuery Wrapper Minimal Demo</title>
+     <link href="{{ asset('bundles/nwpassessment/css/fineuploader-3.3.0.css') }}" type="text/css" rel="stylesheet" /> 
+  </head>
+  <body>
+    <div id="jquery-wrapped-fine-uploader"></div>
+ 
+     <script src="{{ asset('bundles/nwpassessment/js/jquery.min.js') }}"></script>
+     <script src="{{ asset('bundles/nwpassessment/js/fineuploader/jquery.fineuploader-3.3.0.js') }}" ></script> 
+    <script>
+      $(document).ready(function () {
+        $('#jquery-wrapped-fine-uploader').fineUploader({
+          request: {
+            endpoint: '{{ path('projectsite_scoringitem_new_multiple_papers_upload') }}'
+          },
+          failedUploadTextDisplay: {
+            mode: 'custom',
+            maxChars: 100,
+            responseProperty: 'error',
+            enableTooltip: true
+          },
+          debug: true
+        });
+      });
+    </script>
+  </body>
+</html>

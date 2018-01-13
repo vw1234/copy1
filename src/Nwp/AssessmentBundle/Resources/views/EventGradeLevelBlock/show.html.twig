@@ -1,0 +1,30 @@
+{% extends 'NwpAssessmentBundle::layout.html.twig' %}
+{% block title %}
+{{ parent() }} - Prompts - Show {{ 'views.new.creation'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}
+{% endblock %}
+{% block page %}
+<div class="span8">
+ <h3 class="title">Prompts</h3>
+ {% if (prompts[0] is defined) %}
+ <h4>Grade Level {{ prompts[0].eventGradeLevelBlock.gradeLevel}}, Block {{ prompts[0].eventGradeLevelBlock.blockId}}</h4>
+  <h5>Target: {{ prompts[0].eventGradeLevelBlock.target}}%</h5>
+ <table width="500" class="table-striped">  
+{% for key, p in prompts_new %}
+    <tr> <td><strong>Table {{ key}}: </strong></td>
+      <td>  
+{% for pn in p %}
+      {{pn}}{% if p|length > 1 and loop.index !=p|length%},{% endif %}
+    {% endfor %}
+    </td>
+    </tr>
+{% endfor %}               
+</table>
+ {% else %}
+     <h4>No Prompts exist for this Block</h4>
+ {% endif %}
+ </br>
+<div class="float-left">
+    <a class="btn" href="{{ path('eventsite_block') }}">Back to Blocks</a>         
+</div>
+</div>
+{% endblock %}

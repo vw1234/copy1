@@ -1,0 +1,7 @@
+{% extends 'SonataAdminBundle:CRUD:base_list_field.html.twig' %}
+
+{% block field%}
+    <div>
+      <strong> <a href="{{ path('nwp.assessment.admin.eventroom_list', {'event': object.id}) }}" class="view_link" title="">{{ object.name }}</a></strong>
+    </div>
+{% endblock %}

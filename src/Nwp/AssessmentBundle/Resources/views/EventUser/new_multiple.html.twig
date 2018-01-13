@@ -1,0 +1,18 @@
+{% extends 'NwpAssessmentBundle::layout.html.twig' %}
+{% block title %}
+{{ parent() }} - Update Attendees
+{% endblock %}
+{% block page %}
+<h3 class="title">Update Attendees</h3>
+<h4>Upload records to the database</h4>
+<form class="well" name="csv_upload_form" action="{{ path('projectsite_eventuser_new_multiple')}}" method="post" {{ form_enctype(form1) }}>
+    {{ form_widget(form1) }}
+   
+        <p><select name="action">
+            <option value="update">Update Attendees</option>    
+        </select></p>
+        <p>
+        <button type="submit" class="btn " name="btn_batch_action" value="btn_batch_action" onclick="return confirm('Are you sure you would like to execute the selected action for all records in the file?');">OK</button>
+       </p>
+</form>
+{% endblock %}

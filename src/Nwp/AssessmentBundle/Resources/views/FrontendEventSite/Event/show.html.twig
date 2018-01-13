@@ -1,0 +1,45 @@
+{% extends 'NwpAssessmentBundle::layout.html.twig' %}
+
+{% block title %}
+{{ parent() }} - Event {{ 'views.show.show'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}
+{% endblock %}
+
+{% block page %}
+{% if app.session.get('CurrentEventUserSession') is defined and app.session.get('CurrentEventUserSession') ==entity.id %}
+{% if app.user.username is defined %}
+      {% render url('NwpAssessmentBundle_pages_roles') %}
+ {% endif %}
+</br>
+<h4 class="header">Event Details</h4>
+{% else %}
+<h4 class="header">Event - show</h4>
+{% endif %}
+<div>
+    <p><strong>Start Date</strong>: {{ entity.startDate|date('F d, Y g:i A') }}</p>
+    <p><strong>End Date</strong>: {{ entity.endDate|date('F d, Y g:i A') }}</p>
+    <p><strong>Location</strong>: {{ entity.location }}</p>
+    <p><strong>Description</strong>: {{ entity.description }}</p>
+</div> 
+    {% if entity.announcements !="" %}
+       </br>
+       <h4 class="header">Announcements</h4>
+       <div> <p>{{ entity.announcements }}</p></div>
+    {% endif %}
+  
+
+<div>
+    <div class="float-left">
+    {% if (app.session.get('EventCountUserSession') >1)%}
+        {% if app.session.get('CurrentEventUserSession') is defined and app.session.get('CurrentEventUserSession') !=""%}
+            <a class="btn" href="{{ path('eventsite_event', { 'multiple': 1}) }}">
+                Change to another event
+            </a>
+        {% else %}
+            <a class="btn" href="{{ path('eventsite_event') }}">
+                {{ 'views.recordactions.backtothelist'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}
+            </a>
+        {% endif %}
+    {% endif %}
+   </div>  
+</div>
+{% endblock %}

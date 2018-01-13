@@ -1,0 +1,22 @@
+{% extends 'NwpAssessmentBundle::layout.html.twig' %}
+
+{% block title %}
+{{ parent() }} - Prompt {{ 'views.new.creation'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}
+{% endblock %}
+
+{% block page %}
+
+<h3 class="title">Prompt {{ 'views.new.creation'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}</h3>
+
+<form action="{{ path('projectsite_prompt_create') }}" method="post" {{ form_enctype(form) }}>
+    {{ form_widget(form) }}
+    <p>
+        <button type="submit" class="btn btn-primary">{{ 'views.new.create'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}</button>
+    
+     <a class="btn" href="{{ path('projectsite_prompt') }}">
+            {{ 'views.recordactions.backtothelist'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}
+     </a>
+     </p>
+</form>
+
+{% endblock %}

@@ -1,0 +1,11 @@
+web/bundles/
+app/bootstrap.php.cache
+app/cache/*
+app/logs/*
+app/uploads/*
+app/config/parameters.yml
+build/
+vendor
+bin
+composer.phar
+svn*

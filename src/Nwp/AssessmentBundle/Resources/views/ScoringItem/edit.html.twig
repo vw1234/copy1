@@ -1,0 +1,141 @@
+{% extends 'NwpAssessmentBundle::layout.html.twig' %}
+
+{% block title %}
+{{ parent() }} - ScoringItem {{ 'views.edit.edit'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}
+{% endblock %}
+
+{% block page %}
+{% block javascript %}
+<script src="{{ asset('bundles/nwpassessment/js/organization_type.js') }}"></script>
+<script src="{{ asset('bundles/nwpassessment/js/form_collections.js') }}"></script>
+<script>
+$(document).ready(function () {
+    getOrganizationType();
+    
+    $("#nwp_assessmentbundle_scoringitemtype_organizationType").change(function () {
+        getOrganizationType();
+    });
+    $("#nwp_assessmentbundle_scoringitemtype_state").change(function () {
+        $.ajax({
+        type: "GET",
+        data: "data=" + $(this).val(),
+        url:"{{ path('_countyByStateId') }}",
+        success: function(msg){
+            if (msg != ''){
+                $('#nwp_assessmentbundle_scoringitemtype_county').html(msg).show();
+            } else {
+                $('#nwp_assessmentbundle_scoringitemtype_county').html('<em>No counties are available</em>');
+            }
+        }
+       });
+    });
+    $("#nwp_assessmentbundle_scoringitemtype_project").change(function () {
+        $.ajax({
+        type: "GET",
+        data: "data_project=" + $(this).val(),
+        url:"{{ path('_promptByProjectId') }}",
+        success: function(msg){
+            if (msg != ''){
+                $('#nwp_assessmentbundle_scoringitemtype_prompt').html(msg).show();
+            } else {
+                $('#nwp_assessmentbundle_scoringitemtype_prompt').html('<em>No prompts are available</em>');
+            }
+        }
+       });
+    });
+});
+</script>
+{% endblock %}
+<h3 class="title">Paper {{ 'views.edit.edit'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}</h3>
+<form action="{{ path('projectsite_scoringitem_update', { 'id': entity.id }) }}" method="post" {{ form_enctype(edit_form) }}>
+    <table>
+     <tr>
+        <td>{{ form_label(edit_form.studentId) }}</td><td>{{ form_errors(edit_form.studentId) }}</td><td>{{ form_widget(edit_form.studentId) }}</td>
+     </tr>
+     <tr>
+        <td>{{ form_label(edit_form.administrationTime) }}</td><td>{{ form_errors(edit_form.administrationTime) }}</td><td>{{ form_widget(edit_form.administrationTime) }}</td>
+     </tr>
+     <tr>
+        <td>{{ form_label(edit_form.year) }}</td><td>{{ form_errors(edit_form.year) }}</td><td>{{ form_widget(edit_form.year) }}</td>  
+     </tr>
+      <tr>
+        <td>{{ form_label(edit_form.project) }}</td><td>{{ form_errors(edit_form.project) }}</td><td>{{ form_widget(edit_form.project) }}</td>  
+     </tr>
+     <tr>
+        <td>{{ form_label(edit_form.prompt) }}</td><td>{{ form_errors(edit_form.prompt) }}</td><td>{{ form_widget(edit_form.prompt) }}</td>  
+     </tr>
+     <tr>
+        <td>{{ form_label(edit_form.gradeLevel) }}</td><td>{{ form_errors(edit_form.gradeLevel) }}</td><td>{{ form_widget(edit_form.gradeLevel) }}</td>  
+     </tr>
+     <tr>
+        <td>{{ form_label(edit_form.organizationType) }}</td><td>{{ form_errors(edit_form.organizationType) }}</td><td>{{ form_widget(edit_form.organizationType) }}</td>  
+     </tr>
+     <tr>
+        <td>{{ form_label(edit_form.ncesId) }}</td><td>{{ form_errors(edit_form.ncesId) }}</td><td>{{ form_widget(edit_form.ncesId) }}</td>  
+     </tr>
+     <tr>
+        <td>{{ form_label(edit_form.psId) }}</td><td>{{ form_errors(edit_form.psId) }}</td><td>{{ form_widget(edit_form.psId) }}</td>  
+     </tr>
+     <tr>
+        <td>{{ form_label(edit_form.districtId) }}</td><td>{{ form_errors(edit_form.districtId) }}</td><td>{{ form_widget(edit_form.districtId) }}</td>  
+     </tr>
+     <tr>
+        <td>{{ form_label(edit_form.ipedsId) }}</td><td>{{ form_errors(edit_form.ipedsId) }}</td><td>{{ form_widget(edit_form.ipedsId) }}</td>  
+     </tr>
+     <tr>
+        <td>{{ form_label(edit_form.organizationName) }}</td><td>{{ form_errors(edit_form.organizationName) }}</td><td>{{ form_widget(edit_form.organizationName) }}</td>  
+     </tr>
+      <tr>
+        <td>{{ form_label(edit_form.state) }}</td><td>{{ form_errors(edit_form.state) }}</td><td>{{ form_widget(edit_form.state) }}</td>  
+     </tr>
+     <tr>
+        <td>{{ form_label(edit_form.county) }}</td><td>{{ form_errors(edit_form.county) }}</td><td>{{ form_widget(edit_form.county) }}</td>  
+     </tr>
+      <tr>
+        <td>{{ form_label(edit_form.classroomId) }}</td><td>{{ form_errors(edit_form.classroomId) }}</td><td>{{ form_widget(edit_form.classroomId) }}</td>  
+     </tr>
+     <tr>
+        <td>{{ form_label(edit_form.teacherId) }}</td><td>{{ form_errors(edit_form.teacherId) }}</td><td>{{ form_widget(edit_form.teacherId) }}</td>  
+     </tr>
+     
+    </table>
+   {% if (entity.originalFilename)%}
+        Original Filename: {{ entity.originalFilename }}
+   {% else %}
+        Original Filename: N/A
+    {% endif %}
+    </br>
+   {% if (entity.originalFileName) and(entity.dateUploaded) %}
+        Attached File:   <a href="{{ path('projectsite_scoringitem_download', { 'id': entity.id }) }}" target="blank">{{entity.originalFileName}}.{{entity.filetype}} </a>
+   {% else %}
+        Attached File: N/A
+    {% endif %}
+    </br>
+    {% if (entity.dateUploaded)%}
+        Date File Uploaded: {{ entity.dateUploaded|date('Y-m-d H:i:s') }}
+   {% else %}
+        Date File Uploaded: N/A
+    {% endif %}
+    
+     <p>
+    {{ form_rest(edit_form) }}
+   
+        <button type="submit" class="btn btn-primary" name="btn_edit" value="btn_edit">{{ 'views.edit.editbutton'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}</button>
+       <button type="submit" class="btn" name="btn_edit_and_create" value="btn_edit_and_create">{{ 'views.edit.edit_and_create_button'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}</button>
+        <a class="btn" href="{{ path('projectsite_scoringitem') }}">
+            {{ 'views.recordactions.backtothelist'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}
+        </a>
+    </p>
+</form>
+
+<div>
+   
+    <div class="float-left">
+        <form action="{{ path('projectsite_scoringitem_delete', { 'id': entity.id }) }}" method="post">
+            {{ form_widget(delete_form) }}
+            <button class="btn" type="submit" onclick="return confirm('{{ 'views.recordactions.confirm'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}');">{{ 'views.recordactions.delete'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,135 @@
+{% extends 'NwpAssessmentBundle::layout.html.twig' %}
+{% set main_path='eventsite_calibration'  %}
+{% set show_path='eventsite_calibration_show'  %}
+{% set edit_path='eventsite_calibration_new'  %}
+{% set queryParams = app.request.query.all %}
+
+{% block title %}
+    {{ parent() }} - Calibration {{ 'views.index.list'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}
+
+{% endblock %}
+
+{% block page %}
+    <div class="span8">
+    
+           <h3 class="title">Calibration Papers</h3>
+        
+    </div>
+<div class="row">
+    <div class="span2"> 
+        {% if form_errors(filterForm) %}
+        <div class="alert alert-block alert-error fade in form-errors">
+            {{ form_errors(filterForm) }}
+        </div>
+        {% endif %}
+        &nbsp;
+    </div>
+    
+    <div class="span2">
+        <div class="filters-right">
+            <a class="btn dropdown-toggle" data-toggle="collapse" data-target="#filters">
+                {{ 'views.index.filters'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}
+                <span class="caret"></span>
+            </a>
+        </div>
+    </div>
+ 
+  {% if filterData|length>0 %}
+   <div class="span12"> 
+        <form id="reset_form" action="{{ path('eventsite_calibration') }}" method="post" {{ form_enctype(filterForm) }}>
+             <button type="submit" name="filter_action" value="reset">{{ 'views.index.filterreset'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}</button>             
+        </form> 
+    </div>
+  {% endif %}
+    <div class="span12">
+        <div id="filters" class="collapse">
+
+            <form class="well" action="{{ path('eventsite_calibration') }}" method="post" {{ form_enctype(filterForm) }}>
+               
+                   {{ form_row(filterForm.scoringItem) }}
+                
+                    {% if user_role_id==role_scorer1_id or user_role_id==role_scorer2_id or user_role_id==role_admin_id%} 
+                        {{ form_row(filterForm.status) }}
+                    {% endif%}
+                    {% if user_role_id==role_admin_id or user_role_id==role_event_leader_id %} 
+                        {{ form_row(filterForm.gradeLevelId) }}
+                     {% endif%}
+                    {{ form_rest(filterForm) }}
+
+                <p>
+                    <button type="submit" name="filter_action" value="filter">{{ 'views.index.filter'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}</button>
+                    <button type="submit" name="filter_action" value="reset">{{ 'views.index.filterreset'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}</button>
+                    
+                </p>
+            </form>
+        </div>
+    </div> 
+<div class="span12"></div>  
+<div class="span11">
+</br>
+    <table  class="table table-striped table-condensed">
+    <thead>
+        <tr>
+            <th></th>
+            <th>Prompt</th>
+            <th>Paper</th>
+            
+            {% if user_role_id==role_admin_id or user_role_id==role_event_leader_id%}
+                <th>Scoring Room</th>
+            {% endif %} 
+            {% if user_role_id==role_admin_id%}
+                <th>Status</th>
+            {% endif %} 
+            <th>Correct Scores</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for entity in entities %}
+            {% if queryParams['page'] is defined and queryParams['page'] !=1 %}
+                 {% set paper_number = ((queryParams['page']-1)*10) + loop.index %}
+            {% else%}
+                {% set paper_number=loop.index %}
+            {% endif %}
+            
+          <tr>
+            
+            <td>{{paper_number}}</td>
+            <td>{{entity.promptName}}</td>
+            <td>
+                
+                {% if entity.scoringItem is defined%}
+                    {% set paper_id=entity.scoringItem%} 
+                {% else%}
+                    {% set paper_id=0%} 
+                {% endif %} 
+                {% if entity.actionName =="edit"%}                   
+                    <a class="btn" href="{{ path(edit_path, { 'previous_scoringitemstatus': entity.id, 'component_id': 2 }) }}" onclick="window.open('{{ path('eventsite_scoringitem_download', { 'id': paper_id }) }}','Paper'); return true;" >Paper {{ paper_id }}</a></td>
+                {% elseif entity.actionName =="show"%}
+                    <a class="btn" href="{{ path('eventsite_calibration_correct_results', { 'id': entity.id }) }}" onclick="window.open('{{ path('eventsite_scoringitem_download', { 'id': paper_id }) }}','Paper'); return true;" >Paper {{ paper_id }}</a></td>
+                {% endif %} 
+            
+            {% if user_role_id==role_admin_id or user_role_id==role_event_leader_id%}
+                <td>{{ entity.gradeLevelName }}</td>
+            {% endif %} 
+           {% if user_role_id==role_admin_id%}
+                <td>{{ entity.statusName }}</td>  
+           {% endif %} 
+         <td>      
+          {% if ((user_role_id!=role_scorer1_id and user_role_id!=role_scorer2_id and user_role_id!=role_admin_id) or (entity.statusName=='Accepted'))%}
+                <a class="btn"  href="{{ path('eventsite_calibration_commentary', { 'id': entity.id }) }}" onclick="window.open('{{ path('eventsite_scoringitem_download', { 'id': paper_id }) }}','Paper'); return true;" >Correct Scores / Explanation</a> 
+          {% else %} 
+               <button class="btn" type="submit" disabled="true">Correct Scores / Explanation</button>
+         {% endif %} 
+         </td>
+        </tr>
+
+    {% endfor %}
+    </tbody>
+</table>
+    </div>
+    <div class="span4">
+    {{ pagerHtml|raw }}
+    </div>
+  </div>
+
+{% endblock %}

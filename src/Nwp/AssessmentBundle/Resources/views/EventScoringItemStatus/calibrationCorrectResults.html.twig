@@ -1,0 +1,68 @@
+{% extends 'NwpAssessmentBundle::layout.html.twig' %}
+{% block title %}
+{{ parent() }} - Calibration - Correct Results
+{% endblock %}
+{% block page %}
+{% set list_path = 'eventsite_calibration'  %}
+{% set currentPath =path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params'))  %}
+{% set commentary=false %}
+{% if '/commentary' in currentPath %}
+    {% set commentary=true %}
+{% endif %}
+{% block javascript %}
+<script>
+$(document).ready(function () {
+  $(".disable").one('click',function(e){
+    $(this).attr('disabled', true);
+    $(this).on('click',function(ev){ //link can only be clicked once (prevents subsequent clicks)
+      ev.preventDefault();
+    });  
+  });
+});
+</script>
+{% endblock %}
+ <h3 class="title">Calibration:  Paper ID {{ entity.scoringItem }}</h3>
+{% if correct_scores is defined%}    
+    </br>
+    </br>
+    <h3>Correct Scores</h3>
+        <table width="160" class="table-striped">
+        {% for correct_score in correct_scores %}
+            <tr>   
+                <td>{{ correct_score.scoringRubricAttribute}}: </td>
+                <td><strong>{{ correct_score.score}}</strong></td>  
+            </tr>
+        {% endfor %}         
+        </table>
+    </br>
+{% endif %}
+{% if commentary == true%}
+  <h3>Explanation</h3>
+  <table class="table-striped table-bordered table-condensed">
+    <thead>
+        <tr>
+            <th>Attribute</th>
+            <th>Score</th>
+            <th>The writing:</th>
+        </tr>
+    </thead>
+    {% for correct_score in correct_scores %}
+       <tr> 
+        <td><strong>{{ correct_score.scoringRubricAttribute}}</strong> </td>
+        <td  style="text-align:center">   <strong>{{ correct_score.score}}</strong> </td>
+        <td>{{ correct_score.comment |raw }} </td>
+        </tr>
+    {% endfor %}  
+     
+  </table>
+{% endif %}   
+</br>
+<div>
+    <div class="float-left">
+        <a class="btn" href="{{ path(list_path) }}">{{ 'views.recordactions.backtothecalibration'|trans({}, 'JordiLlonchCrudGeneratorBundle') }} </a>
+         &nbsp;&nbsp;&nbsp;<a class="btn"  href="{{ path('eventsite_calibration_results', { 'id': entity.id }) }}">{{ 'views.recordactions.viewcalibrationresults'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}</a> 
+    </div>
+   
+</div>
+
+{% endblock %}

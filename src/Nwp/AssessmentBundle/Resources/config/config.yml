@@ -1,0 +1,4 @@
+parameters:
+    # Blogger contact email address - real address goes here
+    # In dev environment can be overwrittenin in swiftmailed function with delivery_address
+    nwp_assessment.contact_email: contact@email.com

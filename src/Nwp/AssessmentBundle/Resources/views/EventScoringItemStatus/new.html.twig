@@ -1,0 +1,281 @@
+{% extends 'NwpAssessmentBundle::layout.html.twig' %}
+{% block title %}
+Score Form
+{% endblock %}
+
+{% block page %}
+{% if previous_entity.component.id==2 %}
+    {% set list_path = 'eventsite_calibration'  %}
+{% else %}   
+    {% set list_path = 'eventsite_eventscoringitemstatus'  %}
+{% endif %}
+{% if previous_entity is defined %}
+
+{% set paper_id=previous_entity.eventScoringItem.scoringItem%} 
+{% set review_entity_id=""%} 
+{% if review_entity is defined  and review_entity !=""%}
+            {% set review_entity_id=review_entity.id%} 
+{% endif %}
+<link href="{{ asset('bundles/nwpassessment/css/popBox1.3.0.css') }}" rel="stylesheet" /> 
+<style type="text/css">
+ div label {
+           display: inline-block;
+            }          
+ div label.wide {
+           display: inline-block;
+           width: 120px;
+            }
+ .btn {
+      vertical-align:top;
+      }   
+table.scores td {
+  height: 50px;
+  vertical-align: middle;
+  overflow: hidden;
+}
+ </style>
+ {% block javascript %}
+<script src="{{ asset('bundles/nwpassessment/js/jquery.popBox1.3.0/popBox1.3.0.min.js') }}"></script>
+<script>
+$(document).ready(function () {
+    //popup box logic
+    //example: http://www.mywebdeveloperblog.com/my-jquery-plugins/jquery-popbox
+    {% for attribute in attributes %}
+            $("#scoring_form_commentary_{{attribute.id}}").popBox({width:500});
+    {% endfor %} 
+    //end of popup box logic
+    var edit_scores = $("#edit_scores").val();
+    //04-23-14
+    //hack for the "New Paper" button, since index page does not always open the tab for the physical paper
+    //open paper popup when the page loads
+    window.open('{{ path('eventsite_scoringitem_download', { 'id': paper_id }) }}','Paper');
+    if (edit_scores == "1") {
+        $("#scores").show();
+        $("#reset_form").show();
+    } else if (edit_scores == "0") {
+        $("#scores").hide();
+         $("#reset_form").hide(); 
+    }
+    $("#hide_score_form").click(function() {
+        $("#scores").hide();
+        $("#reset_form").hide();      
+    });
+    $("#show_score_form").click(function() {
+        $("#scores").show();
+         $("#reset_form").show();
+    });
+    $("#reset_form").click(function() {  //reset button does not work after values have been submitted, so clear out the form manually
+         $("#scores_form").find('input:radio, input:checkbox')
+         .removeAttr('checked').removeAttr('selected'); //clears out radiobuttons and checkboxes
+         //uncomment the next line if other field types are added to this form in the future
+         //$("#scores_form").find('input:text, input:password, input:file, select, textarea').val('');
+    });
+    
+   // $(".disable").one('click',function(e){
+   //     $(this).attr('disabled', true);
+   //     $(this).on('click',function(ev){ //link can only be clicked once (prevents subsequent clicks)
+   //         ev.preventDefault();
+   //     });  
+   // });
+  
+    $("#submit_form").one('click',function(e){
+        var confirmed = true;
+        if (edit_scores=="0") {
+            checked=false;
+            $("input[id^='scoring_form_score_']").each(function(i) {
+            if ($(this).is(':checked')) {
+                 checked=true; //at least one score was given, so confirm whether they want to overwrite
+                } 
+            });
+            if (checked==true) {  //confirm dialog             
+               $('#dialog').dialog('open');  
+                return false;
+            }     
+        }
+       
+       //if there's no confirm dialog, disable Submit button and submit the form       
+       $(this).attr('disabled', true);
+       $(this).on('click',function(ev){ //link can only be clicked once (prevents subsequent clicks)
+            ev.preventDefault();
+        });
+       $('#scores_form').submit(); 
+    });
+    
+    $( "#dialog" ).dialog({
+        autoOpen: false,
+        resizable: false,
+        height: "auto",
+        width: 400,
+        title: "Please confirm",
+        modal: true,
+        open: function () {
+            jQuery(this).closest( ".ui-dialog" ).find(":button").blur(); //out of the box the first button is highlighted, unhighlight it
+            if ($("#scoring_form_status").val()==11) {
+                msg = "Are you sure you want to overwrite the scores?";
+            } else {
+                msg = "The selected action does not allow the overwriting of scores.  Are you sure you want the system to ignore the scores selected on the Edit form?";
+           }
+           var markup = msg;
+           $(this).html(markup);
+        },
+        buttons: {
+            "Yes": function() {
+                $('#scores_form').submit(); 
+            },
+            Cancel: function() {
+                $( this ).dialog( "close" );
+            }
+      }
+    });
+});
+</script>
+{% endblock %}
+ <h3 class="title">Paper ID  {{paper_id}}
+  {% if ((paper_id.prompt is defined) and (paper_id.prompt !="") and (paper_id.prompt is not null)) %}
+    - {{paper_id.prompt}}
+   {% endif %}
+ </h3>
+{% if scores is defined and scores|length>0%}
+<h3>Attribute Scores - Scored by {{scores[0].eventScoringItemStatus.createdBy}}</h3> 
+<table width="160" class="table-striped">
+    
+      {% for score in scores %}
+            <tr>   
+                <td>{{ score.scoringRubricAttribute}}: </td>
+                <td><strong>{{ score.score}}</strong></td>
+                
+            </tr>
+        {% endfor %}
+                
+</table>
+{% endif %}
+ <h4>Scores</h4>
+<form id="scores_form" action="{{ path(list_path~'_create', {'previous_scoringitemstatus': previous_entity.id,'component_id': previous_entity.component.id,'review_scoringitemstatus': review_entity_id }) }}" method="post" {{ form_enctype(form) }}>
+ 
+  <table style = "width: 62%;" class="table table-striped table-bordered table-scores" id="scores">
+        <tbody>
+            {% for attribute in attributes %}
+                {% set child = "score_" ~ attribute.id %}
+               
+             <tr>                      
+              <td width="120"><strong>{{ form_label(form[child]) }}</strong></td>
+              {% for choiceFormView in form[child] %}
+                    <td style="text-align: center;">{{  form_widget(choiceFormView) }}{{  form_label(choiceFormView) }}</td>
+            {% endfor %}
+                {% if ((previous_entity.component.id==2) and (user_role_id==role_admin_id))%} 
+                    {% set child_commentary = "commentary_" ~ attribute.id %}
+                    <td width="120"><strong>{{  form_widget(form[child_commentary]) }}</strong></td> 
+                {% endif%}
+            </tr>
+           
+        {% endfor %}
+            
+        <tbody>        
+    </table>
+       
+    <p>
+        {% if (previous_entity.component.id==1)%} 
+            {{ form_label(form.status, null, {'label_attr': {'class': 'wide'}}) }}{{ form_errors(form.status) }}{{ form_widget(form.status) }}
+         {% endif%}        
+        <button id="submit_form" type="submit" class="btn btn-primary" >
+            
+            {% if previous_entity.component.id==1 %}
+                    Submit Action
+            {% else %}
+                    Submit
+            {% endif%} 
+        </button>
+       
+        <a class="btn" href="{{ path(list_path) }}">
+            {% if previous_entity.component.id==1 %}     
+                 {{ 'views.recordactions.backtothequeue'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}
+            {% else %} 
+                 {{ 'views.recordactions.backtothecalibration'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}
+            {% endif %}
+           
+        </a>
+        {% if (user_role_id !=role_admin_id and user_role_id != role_event_leader_id)%}
+            <button id="reset_form" type="reset" class="btn">Reset Scores</button>
+        {% endif%} 
+          {% if form.assignedTo is defined %}
+             </br>
+            {{ form_label(form.assignedTo, null, {'label_attr': {'class': 'wide'}}) }}{{ form_errors(form.assignedTo) }}{{ form_widget(form.assignedTo) }}
+        {% endif %}
+
+    </p>
+     {% if previous_entity.component.id==1 %}  
+        {{ form_label(form.comment, null, {'label_attr': {'class': 'wide'}}) }}{{ form_errors(form.comment) }}{{ form_widget(form.comment) }}
+     {% endif %}
+    {{ form_rest(form) }}
+    <input type="hidden" id="edit_scores" name="edit_scores" value={{edit_scores}}>
+</form>
+ {% if (edit_scores==0 and user_role_id !=role_admin_id and user_role_id != role_event_leader_id)%}
+    <input type="button" id="show_score_form" class="btn" value="Edit Scores" />
+    <input type="button" id="hide_score_form" class="btn" value="Hide Edit Scores" />
+ {% endif%} 
+<div>
+   
+</div>
+<div id="dialog" style="display: none" align = "left"></div>
+{% if (previous_entity.component.id==1)%} 
+ {% if ((user_role_id==role_scorer1_id) or (user_role_id==role_scorer2_id))%} 
+<h3>Comment History</h3>
+ {% else%} 
+<h4>Paper History</h4>
+ {% endif%} 
+<table style = "width: 62%;" class="table table-striped table-bordered">
+    <thead>
+           <tr>
+                <th>Created By</th>        
+                {% if user_role_id==role_admin_id%} 
+                    <th>Scoring Round</th>
+                    <th>Read Number</th>
+                {% endif %}
+                {% if user_role_id==role_admin_id or user_role_id==role_event_leader_id%}
+                    <th>Room</th>
+                {% endif %}
+                {% if ((user_role_id!=role_scorer1_id) and (user_role_id!=role_scorer2_id))%}     
+                    <th>Status</th> 
+                    <th>Scores</th>
+                {% endif %}
+                <th>Comment</th>
+                <th>Last Updated</th>                                 
+            </tr> 
+       </thead>
+       {% if status_history is defined  and status_history !=""%}
+       {% for sh in status_history %}
+        {% if ((((user_role_id==role_scorer1_id) or (user_role_id==role_scorer2_id)) and sh.comment !="") or ((user_role_id!=role_scorer1_id) and (user_role_id!=role_scorer2_id))) %}
+            
+            <tr>  
+                 {% if ((user_role_id==role_admin_id) or (user_role_id==role_event_leader_id) or (sh.scoringRoundNumber!=3)) %}
+                    <td>{{ sh.createdBy}}</td>  
+                 {% else %}
+                     <td></td> 
+                 {% endif %}
+                 {% if user_role_id==role_admin_id%} 
+                    <td>{{ sh.scoringRoundNumber}}</td>
+                    <td>{{ sh.ReadNumber}}</td>
+                 {% endif %}
+                 {% if user_role_id==role_admin_id or user_role_id==role_event_leader_id%}
+                     <td>{{ previous_entity.gradeLevelId}}</td>
+                 {% endif %}
+                 {% if ((user_role_id!=role_scorer1_id) and (user_role_id!=role_scorer2_id))%} 
+                    <td>{{ sh.status}}</td>
+                    <td> {% for p in sh.scores %}  
+                        {{ p.scoringRubricAttribute }} - {{ p.score }}</br>       
+                        {% endfor %}</td>
+                  {% endif %}
+                     <td>{{ sh.comment}}</td>
+                 {% if sh.timeCreated is defined and sh.timeCreated!="" %}
+                    <td>{{ sh.timeCreated|date('m/d/y H:i') }}</td>
+                {% else %}
+                    <td>N/A</td>
+                {% endif %}
+            </tr>
+            {% endif %}
+        {% endfor %}
+        {% endif %}
+</table>
+{% endif%} 
+{% endif %}
+{% endblock %}

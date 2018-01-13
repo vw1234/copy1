@@ -1,0 +1,95 @@
+{% extends 'NwpAssessmentBundle::layout.html.twig' %}
+{% block title %}
+{{ parent() }} - Event Progress {{ 'views.index.list'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}
+{% endblock %}
+
+{% block page %}
+<div class="span8">
+       <h3 class="title">Event Progress</h3>
+    </div>
+<div class="row">   
+</div>
+
+{% if (papers_status_count|length>0)%}
+<h4 class="header">Scoring Status Counts by Grade Level</h4>
+<table width="60%" class="table-condensed table-striped table-fixed">
+    <thead>
+        <tr>
+            <th></th>
+            {% for s in statuses %}
+                {% if s.name=='Ready'%}
+                     <th>Remaining</th>
+                {% else %}
+                     <th>{{s.name}}</th>
+                {% endif %}
+               
+            {%  endfor %}
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody> {% for key, grade_level in grade_level_array %}
+              <tr>  
+                  <td>Grade Level {{grade_level.grade_level_name}}</td>
+                  {% for s in statuses %}
+                     <td  style="text-align:center">
+                    {% if papers_status_count[key][s.id].number_of_papers is defined%}
+                       {{papers_status_count[key][s.id].number_of_papers}}
+                    {% else %}
+                        0
+                    {% endif %}
+                      </td>
+                 {% endfor %}
+                   <td style="text-align:center">{{grade_level.number_of_papers}}</td>
+              </tr>
+          {% endfor %}
+              {% if grade_level_array|length>1%}
+              <tr>  
+                  <td>Total</td>
+                 {% for s in statuses %}
+                     <td  style="text-align:center">
+                    {% if papers_status_count_status[s.id].number_of_papers is defined%}
+                        {{papers_status_count_status[s.id].number_of_papers}}
+                    {% else %}
+                        0
+                    {% endif %}
+                      </td>
+                 {% endfor %}
+                  <td style="text-align:center">{{papers_status_count_total}}</td>
+              </tr>
+              {% endif %}
+    </tbody>
+</table>
+</br></br>
+<h4 class="header">Scoring Status Percentages by Grade Level</h4>
+<table width="60%" class="table-condensed table-striped">
+    <thead>
+        <tr>
+            <th></th>
+            {% for s in statuses %}
+                {% if s.name=='Ready'%}
+                     <th>Remaining</th>
+                {% else %}
+                     <th>{{s.name}}</th>
+                {% endif %}
+            {%  endfor %}
+        </tr>
+    </thead>
+    <tbody> {% for key, grade_level in grade_level_array %}
+              <tr>  
+                  <td>Grade Level {{grade_level.grade_level_name}}</td>
+                  {% for s in statuses %}
+                    <td style="text-align:center">
+                    {% if papers_status_count[key][s.id].number_of_papers is defined%}
+                        {{((papers_status_count[key][s.id].number_of_papers/grade_level.number_of_papers)*100)|number_format(1)}}%
+                    {% else %}
+                         0%
+                    {% endif %}
+                      </td>
+                 {% endfor %}
+              </tr>
+          {% endfor %}
+    </tbody>
+</table>
+ 
+{% endif %}
+{% endblock %}

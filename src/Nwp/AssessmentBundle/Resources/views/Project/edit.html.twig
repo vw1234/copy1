@@ -1,0 +1,23 @@
+{% extends 'NwpAssessmentBundle::layout.html.twig' %}
+
+{% block title %}
+{{ parent() }} - Project {{ 'views.edit.edit'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}
+{% endblock %}
+
+{% block page %}
+
+<h3 class="title">Project {{ 'views.edit.edit'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}</h3>
+
+<form action="{{ path('projectsite_project_update', { 'id': entity.id }) }}" method="post" {{ form_enctype(edit_form) }}>
+    {{ form_widget(edit_form) }}
+    <p>
+        <button type="submit" class="btn btn-primary">{{ 'views.edit.editbutton'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}</button>
+       
+        <a class="btn" href="{{ path('projectsite_project') }}">
+            {{ 'views.recordactions.backtothelist'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}
+        </a>  
+    </p>
+</form>
+
+
+{% endblock %}

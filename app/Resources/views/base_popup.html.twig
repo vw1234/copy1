@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+    <head> 
+        <meta http-equiv="Content-Type" content="text/html"; charset=utf-8" />
+        <title>{% block title %}NWP{% endblock %} - Assessment System</title>
+        <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" />
+        <link href="{{ asset('bundles/nwpassessment/css/bootstrap.css') }}" rel="stylesheet">
+        <link href="{{ asset('bundles/nwpassessment/css/bootstrap-responsive.css') }}" rel="stylesheet">
+        <link href="{{ asset('css/screen.css') }}" type="text/css" rel="stylesheet" />
+        <style type="text/css">
+            body {
+                padding-top: 60px;
+                padding-bottom: 40px;
+            }
+            .sidebar-nav {
+                padding: 9px 0;
+            }
+            .table th, .table td { 
+                border-top: none; 
+            }
+            </style>          
+        {% block stylesheets %}    
+        {% endblock %}    
+        <script src="{{ asset('bundles/nwpassessment/js/jquery.min.js') }}"></script>
+        <script src="{{ asset('bundles/nwpassessment/js/bootstrap.js') }}"></script>
+    </head>
+<body>
+    <div class="navbar navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container-fluid"> 
+            <div class="brand">
+                <div class="logo">
+                    <img src="{{ asset('bundles/nwpassessment/images/logo_nwp.png') }}">
+                    &nbsp;&nbsp;&nbsp;Analytic Writing Continuum Online  
+                </div>
+             </div>
+        </div>
+      </div>
+    </div> 
+        <div class="span9">     
+        <div class="row-fluid">  
+            {% block body %}  
+       
+            {% endblock %}
+            
+            {% block content %}
+       
+            {% endblock %}    
+        </div>
+        </br></br>
+        <button class="btn" onclick="javascript:window.history.back();">Go Back</button>
+    </div>
+  </body>
+</html>

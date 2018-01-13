@@ -1,0 +1,48 @@
+{% extends 'NwpAssessmentBundle::layout.html.twig' %}
+
+{% block title %}
+{{ parent() }} - Attendee Upload }}
+{% endblock %}
+
+{% block page %}
+<style type="text/css">
+ table {
+    table-layout: fixed;
+    width: 100%;
+}  
+</style>
+<h3 class="title">Errors - csv file</h3>
+
+<p>Please correct the following errors in your .csv file and resubmit it.  If you have any questions, please <a href="{{ path('NwpAssessmentBundle_pages_contact') }}">contact NWP</a>.</p>
+<table class="table table-striped table-bordered table-condensed">
+    <tr><th>Row</th>
+        {% for c in column_array %}
+            <th>{{c.column_id}}</br>{{c.column_desc}}</th>    
+        {% endfor %}          
+  </tr>
+  {% set column_array_length = column_array|length-1 %}
+  {% for key, value in error_msg_array %}
+        {% if (error_msg_array[key]["uniqueId"] is defined) and (error_msg_array[key]['uniqueId']=="true") %}
+            <tr><td>{{key}}  - not unique</td>
+        {% else %}
+            <tr><td>{{key}}</td> 
+         {% endif %}
+           {%  for c in range(0, column_array_length) %}
+               <td>
+                {% for e in error_type_array %}
+                        {% if error_msg_array[key][c][e.error_id] is defined %}
+                       {{ error_msg_array[key][c][e.error_id]}}
+                       {% endif %}
+                 {% endfor %}       
+                </td>
+            {% endfor %}         
+  {% endfor %} 
+</table>
+<div>
+    <div class="float-left">
+        <a class="btn" href="{{ path('projectsite_eventuser_new_multiple') }}">
+           Back to Attendee Upload
+        </a>
+    </div>
+</div>
+{% endblock %}

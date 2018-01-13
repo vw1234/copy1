@@ -1,0 +1,21 @@
+{{ fields|join(',') }}
+{% set fields_array_length = fields|length %}
+{% for d in data %}
+{%for field in range(0, fields_array_length-1) %}
+{% if field != fields_array_length-1%}
+{% if attribute(d, fields[field]).timestamp is defined %}
+{% spaceless %}{{ attribute(d, fields[field])|date('m/d/Y') }},{% endspaceless %}
+{% else %}
+{% spaceless %}{{ attribute(d, fields[field])|trim}},{% endspaceless %}
+{% endif %}
+{% else %}
+{% if attribute(d, fields[field]).timestamp is defined %}
+{{ attribute(d, fields[field])|date('m/d/Y')}}
+{% else %}
+{{ attribute(d, fields[field]) }}
+{% endif %}
+{% endif %}
+{% endfor %}
+{% endfor %}
+
+

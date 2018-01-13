@@ -1,0 +1,138 @@
+.navbar-inner {
+  background-color:#2659A6; /* fallback color, place your own */
+  background-image: none;
+  
+}
+
+.navbar .nav > li > a  {
+    color: #2659A6;
+}
+
+.navbar-fixed-top .brand {
+  color: #FFFFFF;
+  }
+
+.header  {
+    color: #2659A6;
+}
+
+.highlight{
+    background-color: #F0FFE0;
+}
+
+.horizontal-line {
+    width: 80%;
+    height: 1px;
+    
+    background-color:#686868;
+    color:#686868;
+    border: 0 none;
+    margin-top: 200px;
+    margin-bottom:30px;
+}
+
+/* supersede bootstrap at the cell level (for striped rows that wouldn't overwrite with highlight otherwie)' */
+.table-striped > tbody > tr:nth-child(odd) > td.highlight {
+	background-color:#F0FFE0;
+}
+
+.title  {
+    color: #686868; 
+}
+
+.app-header {
+  
+  margin-bottom: 5px;
+ 
+}
+
+.navbar-fixed-top{
+   margin-bottom: 0px;
+}
+
+div label.inline {
+     display: inline-block;
+     text-align: top;
+     vertical-align:text-top;
+     
+}
+
+.sidebar-nav li {
+    line-height: 35px;
+}
+
+.nav-tabs { 
+    padding-left:30px;    
+}
+
+.tab-content {
+    padding-left:30px;  
+}
+
+
+.sidebar-nav li.active a { 
+    background-color:#2659A6;      
+}
+
+.table-striped>tbody>tr:nth-child(odd)>td, 
+.table-striped>tbody>tr:nth-child(odd)>th {
+   background-color: #FFFFFF;
+ }
+ 
+ .table-fixed  {
+   table-layout: fixed;
+ }
+ 
+
+ 
+/* .table-striped>tbody>tr:nth-child(even)>td, 
+ .table-striped>tbody>tr:nth-child(even)>th {
+   background-color: #E8E8E8;
+ }*/
+
+.btn
+{
+  background-color: #E8E8E8;
+  background-image: none;
+}
+
+.btn:hover
+{
+  background-color: #CCCCCC;  
+}
+
+.btn-primary
+{
+  background-color: #2659A6;
+  border-color: #2659A6;
+}
+
+.btn-primary:hover {
+    background-color: #0044cc;
+}
+ 
+ .logo {  
+    font-size: 24px;
+    text-transform:capitalize;
+    font-variant:small-caps;
+    vertical-align:text-bottom;
+ } 
+ 
+ .tableleft {
+    float: left;
+    margin-right: 50px;
+    
+}
+ .tableright {
+    float: left;
+    
+}
+
+
+
+
+
+
+
+
+

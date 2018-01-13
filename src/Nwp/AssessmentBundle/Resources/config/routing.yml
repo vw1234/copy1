@@ -1,0 +1,34 @@
+NwpAssessmentBundle_pages_welcome:
+    pattern:  /
+    defaults: { _controller: NwpAssessmentBundle:Default:index }
+    
+NwpAssessmentBundle_pages_about:
+    pattern:  /about
+    defaults: { _controller: NwpAssessmentBundle:Default:about }
+    
+NwpAssessmentBundle_pages_contact:
+    pattern:  /contact
+    defaults: { _controller: NwpAssessmentBundle:Default:contact }
+    
+#NwpAssessmentBundle_scoringitem_download:
+ #   pattern:  /scoringitem/{id}/download
+ #   defaults: { _controller: NwpAssessmentBundle:ScoringItem:download }
+    
+NwpAssessmentBundle_pages_nav:
+    pattern:  /nav
+    defaults: { _controller: NwpAssessmentBundle:Default:nav }
+    
+NwpAssessmentBundle_pages_topnav:
+    pattern:  /topnav
+    defaults: { _controller: NwpAssessmentBundle:Default:topnav }
+    
+NwpAssessmentBundle_pages_roles:
+    pattern:  /displayRoles
+    defaults: { _controller: NwpAssessmentBundle:Default:displayRoles }
+        
+
+        
+
+        
+
+        

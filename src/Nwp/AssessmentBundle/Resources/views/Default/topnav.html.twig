@@ -1,0 +1,13 @@
+<ul class="nav header">
+{% if (projects|length>0 or (projects|length==0 and events|length==0)) %}
+    <li><a href="{{ path('NwpAssessmentBundle_pages_contact') }}">Contact us</a></li>
+{% endif %}
+{% if app.user.username is defined %}     
+    {% if projects|length>0 %} 
+        <li><a href="{{ path('projectsite_scoringitem_new_multiple') }}">Manage Papers</a></li>
+        {% if events|length>0%} 
+            <li><a href="{{ path('eventsite_event') }}">Event Site</a></li>
+        {% endif %}
+    {% endif %}
+{% endif %}
+</ul>  

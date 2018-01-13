@@ -1,0 +1,36 @@
+{% if '/eventsite/' in current_url %}
+    {% if app.session.get('CurrentEventUserSession') is defined and app.session.get('CurrentEventUserSession') != "" and events is defined and events|length>0%}
+     <h3 class="title">{{current_event_entity.name}} </h3> 
+     </br>
+     <h4 class="header">Your Event Role</h4>   
+        {% set user_role_id = events[app.session.get('CurrentEventUserSession')][0]['role_id']%} 
+        {% set role = events[app.session.get('CurrentEventUserSession')][0]['role_name']%} 
+        {% set role_display = events[app.session.get('CurrentEventUserSession')][0]['role_display_name']%} 
+        {% set grade_level = events[app.session.get('CurrentEventUserSession')][0]['grade_level_name']%} 
+        {% set table = events[app.session.get('CurrentEventUserSession')][0]['table_id']%}  
+
+     <div>
+       {% if ((user_role_id!=role_scorer1_id) and (user_role_id!=role_scorer2_id)) %}
+            <p><strong>Role</strong>: {{role}}</p>
+       {% else %}
+            <p><strong>Role</strong>: {{role_display}}</p>
+       {% endif %}
+        {% if (grade_level and grade_level !="")%}
+            <p><strong>Grade Level</strong>: {{grade_level}}</p>
+        {% endif %}
+        {% if (table and table !="") %}
+            <p><strong>Table</strong>: {{table}}</p>
+        {% endif %}
+    </div>  
+    {% endif %}
+ {% elseif '/projectsite/' in current_url %}
+    <h4 class="header">Your Project Roles</h4> 
+    <table width="550" class="table-striped table-bordered table-condensed">
+    {% for key, item1 in projects %}
+     <tr>   
+        <td>{{ item1[0].project_name }}: </td>
+        <td><strong>{{ item1[0].role_name }}</strong></td>  
+     </tr>
+    {% endfor %} 
+     </table>
+ {% endif %}

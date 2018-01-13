@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="School" table="school">
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="name" type="string" column="name" length="45" nullable="true"/>
+    <field name="ncesId" type="string" column="nces_id" length="12" nullable="true"/>
+    <field name="psId" type="string" column="ps_id" length="6" nullable="true"/>
+    <field name="zip" type="string" column="zip" length="12" nullable="true"/>
+    <many-to-one field="state" target-entity="State">
+      <join-columns>
+        <join-column name="state_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="nwpSchoolType" target-entity="NwpSchoolType">
+      <join-columns>
+        <join-column name="nwp_school_type_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="district" target-entity="District">
+      <join-columns>
+        <join-column name="district_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="county" target-entity="County">
+      <join-columns>
+        <join-column name="county_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>

@@ -1,0 +1,8 @@
+{% extends "FOSUserBundle::layout.html.twig" %}
+
+{% block fos_user_content %}
+<p>Enter your username or email address below and click the "Reset Password" button. A new password will be sent to the email address associated with your username.</p>
+{% include "FOSUserBundle:Resetting:request_content.html.twig" %}
+<p>Return to <a href="{{ path('fos_user_security_login') }}">log-in</a> page.</p>
+<p> <a href="{{ path('NwpAssessmentBundle_pages_contact') }}">Contact us</a></p>      
+{% endblock fos_user_content %}

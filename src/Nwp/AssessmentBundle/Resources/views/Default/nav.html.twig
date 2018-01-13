@@ -1,0 +1,42 @@
+{% if (nav_level_2|length>1)%}
+    <div class="well sidebar-nav">
+   {% if site=="projectsite"%}
+    <ul class="nav nav-list">     
+        {% for n1 in nav_level_1 %} 
+            {% if (nav_level_1|length>1)%}
+                <li class="nav-header">{{ n1.name }}</li>
+            {% endif %} 
+            {% for n2 in nav_level_2 %}
+                {% set class = "" %}
+                {% if n2.parentId is defined and n2.parentId==n1.id%}
+                    {% if n2.path is defined and n2.path%}
+                        {% set url = path(n2.path)%}
+                        {% if url==current_url%}
+                            {% set class="class=active"%}
+                        {% endif %}
+                        {% else %}
+                            {% set url = "#"%}
+                    {% endif %} 
+                <li {{class}}><a href={{url}}>{{ n2.name }}</a></li> 
+                {% endif %}
+            {% endfor %}   
+        {% endfor %}
+    </ul>  
+{% elseif site=="eventsite"%}
+<ul class="nav nav-list">
+    {% for n2 in nav_level_2 %}
+        {% set class = "" %}
+        {% if n2.path is defined and n2.path%}
+            {% set url = path(n2.path)%}
+            {% if url in current_url%}
+                {% set class="class=active"%}
+            {% endif %}
+        {% else %}
+            {% set url = "#"%}
+        {% endif %} 
+        <li {{class}}><a href={{url}}>{{ n2.name }}</a></li> 
+   {% endfor %}  
+        </ul>
+{% endif %}
+ </div>
+ {% endif %}

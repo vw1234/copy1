@@ -1,0 +1,43 @@
+{% extends '::base.html.twig' %}
+ {% block stylesheets %}
+<link href="{{ asset('bundles/nwpassessment/css/crud.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block sidebar %}
+    {#% if is_granted("ROLE_ADMIN") %}
+        Hi Admin:{{ app.user.username }}
+    {% endif %}
+        {% if is_granted("ROLE_USER") %}
+        Hello : {{ app.user.username }} <br/>
+        {% for key,value in app.user.getGroupNames() %}
+           Your Group:  {{ key }},{{ value }}<br/>
+           Page URL: {{app.request.pathinfo}}<br/>
+        {% endfor %}
+    {% endif %#}
+
+{% endblock %}
+
+{% block body %}
+
+<div class="container">
+    {% block menu %}{% endblock %}
+
+    {% for type, flashMessages in app.session.flashbag.all() %}
+        {% for flashMessage in flashMessages %}
+            <div class="alert alert-{{ type }}">
+                {{ flashMessage|trans({}, 'JordiLlonchCrudGeneratorBundle') }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+<div style="overflow: hidden;" class="well">
+    {% block page %}
+
+    {% endblock %}
+</div>
+</div>
+
+
+
+{% endblock %}
+{% block javascript %}{% endblock %}
+

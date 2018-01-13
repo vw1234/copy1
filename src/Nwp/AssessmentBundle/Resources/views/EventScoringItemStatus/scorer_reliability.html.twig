@@ -1,0 +1,68 @@
+{% extends 'NwpAssessmentBundle::layout.html.twig' %}
+{% block title %}
+{{ parent() }} - Agreement Rates by Scorer {{ 'views.index.list'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}
+{% endblock %}
+
+{% block page %}
+<div class="span8">
+       <h3 class="title">Agreement Rates by Scorer</h3>
+    </div>
+<div class="row">   
+</div>
+{% for key, g in grade_level_array %}
+    {% for t in 1..max_table_array[key].max_table_number %}
+        <h4 class="header">{{g.grade_level_name}} Room, Table {{t}} </h4>
+            <table width="75%" class="table-condensed table-striped table-fixed">
+             <thead>
+                    <tr>
+                        <th></th>
+                        <th>Role</th>
+                        <th>Total Papers Scored</th>
+                         <th>Papers Double-Scored</th>
+                            {% for attribute in attributes %}
+                                <th>{{ attribute.name }}</th>
+                            {%  endfor %}
+          
+                    </tr>
+                     <tr><td></td><td colspan="{{attributes|length+3}}"><hr class="horizontal-line" style="margin-top: 0px;margin-bottom: 0px;width:100%;"></td></tr>
+                </thead> 
+                 <tbody>
+                 {% if reliability_results_by_user[key][t] is defined%}
+                {% for user_id, ru in reliability_results_by_user[key][t] %}
+                    <tr>
+                     <td>{{reliability_results_by_user[key][t][user_id][0].fullname}}</td>
+                     <td>{{reliability_results_by_user[key][t][user_id][0].role_name}}</td>
+                     <td style="text-align:center">
+                     {% if reliability_results_by_user[key][t][user_id][0].total_all is defined%}
+                        {{reliability_results_by_user[key][t][user_id][0].total_all}} 
+                     {% else %}
+                             0
+                      {% endif %}
+                       </td>
+                        <td style="text-align:center">
+                      {% if (reliability_results_by_user[key][t][user_id][0].total_double is defined and reliability_results_by_user[key][t][user_id][0].total_double >0)%}
+                           {{reliability_results_by_user[key][t][user_id][0].total_double}}
+                      {% else %}
+                             0
+                      {% endif %}
+                      </td> 
+                      {% for attribute in attributes %}
+                        <td style="text-align:center">
+                            {% if (reliability_results_by_user[key][t][user_id][attribute.id].adjudicated is defined and reliability_results_by_user[key][t][user_id][0].total_double >0)%}
+                                {{(((reliability_results_by_user[key][t][user_id][0].total_double - reliability_results_by_user[key][t][user_id][attribute.id].adjudicated)/reliability_results_by_user[key][t][user_id][0].total_double)*100)|number_format(1)}}%
+                            {% else %}
+                                0
+                            {% endif %}
+                      </td>
+                      {%  endfor %} 
+                     </tr>
+                 {%  endfor %} 
+                    {%  endif %}
+            </tbody>
+            </table>
+        </br>
+         
+        
+     {% endfor %} 
+    {% endfor %}
+{% endblock %}

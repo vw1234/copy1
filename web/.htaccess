@@ -1,0 +1,27 @@
+RewriteEngine On
+<IfModule mod_rewrite.c>
+    #block hacking scanners
+    #RewriteCond %{HTTP_USER_AGENT} ^ZmEu
+    RewriteCond %{HTTP_USER_AGENT} ^ZmEu [OR]
+    RewriteCond %{HTTP_USER_AGENT} ^w3af.sourceforge.net [NC,OR]
+    RewriteCond %{HTTP_USER_AGENT} dirbuster [NC,OR]
+    RewriteCond %{HTTP_USER_AGENT} nikto [NC,OR]
+    RewriteCond %{HTTP_USER_AGENT} SF [OR]
+    RewriteCond %{HTTP_USER_AGENT} sqlmap [NC,OR]
+    RewriteCond %{HTTP_USER_AGENT} fimap [NC,OR]
+    RewriteCond %{HTTP_USER_AGENT} nessus [NC,OR]
+    RewriteCond %{HTTP_USER_AGENT} whatweb [NC,OR]
+    RewriteCond %{HTTP_USER_AGENT} Openvas [NC,OR]
+    RewriteCond %{HTTP_USER_AGENT} jbrofuzz [NC,OR]
+    RewriteCond %{HTTP_USER_AGENT} libwhisker [NC,OR]
+    RewriteCond %{HTTP_USER_AGENT} webshag [NC,OR]
+    RewriteCond %{HTTP:Acunetix-Product} ^WVS
+    RewriteRule .* – [F]
+
+    #<IfModule mod_vhost_alias.c>
+    #    RewriteBase /
+    #</IfModule>
+
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^(.*)$ app.php [QSA,L]
+</IfModule>

@@ -1,0 +1,23 @@
+{% extends 'NwpAssessmentBundle::layout.html.twig' %}
+
+{% block title %}
+{{ parent() }} - Prompt {{ 'views.edit.edit'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}
+{% endblock %}
+
+{% block page %}
+
+<h3 class="title">Prompt {{ 'views.edit.edit'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}</h3>
+ <p>
+<form action="{{ path('projectsite_prompt_update', { 'id': entity.id }) }}" method="post" {{ form_enctype(edit_form) }}>
+    {{ form_widget(edit_form) }}
+<button type="submit" class="btn btn-primary">{{ 'views.edit.editbutton'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}</button>
+  
+<a class="btn" href="{{ path('projectsite_prompt') }}">{{ 'views.recordactions.backtothelist'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}
+</a>
+</form>
+<form action="{{ path('projectsite_prompt_delete', { 'id': entity.id }) }}" method="post">
+{{ form_widget(delete_form) }}
+<button class="btn" type="submit" onclick="return confirm('{{ 'views.recordactions.confirm'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}');">{{ 'views.recordactions.delete'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}</button>
+</form>
+</p>
+{% endblock %}

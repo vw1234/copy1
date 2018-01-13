@@ -1,0 +1,96 @@
+{% extends 'NwpAssessmentBundle::layout.html.twig' %}
+{% set main_path='eventsite_prompt'  %}
+
+
+{% block title %}
+{{ parent() }} - Blocks {{ 'views.index.list'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}
+{% endblock %}
+
+{% block page %}
+<div class="span8">
+    <h3 class="title">Prompts</h3>
+</div>
+<div class="row">
+{% if ((user_role_id!=role_scorer1_id) and (user_role_id!=role_scorer2_id)) %}
+<div class="span2"> 
+        {% if form_errors(filterForm) %}
+        <div class="alert alert-block alert-error fade in form-errors">
+            {{ form_errors(filterForm) }}
+        </div>
+        {% endif %}
+        &nbsp;
+</div>
+    
+    <div class="span2">
+        <div class="filters-right">
+            <a class="btn dropdown-toggle" data-toggle="collapse" data-target="#filters">
+                {{ 'views.index.filters'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}
+                <span class="caret"></span>
+            </a>
+        </div>
+    </div>
+ 
+  {% if filterData|length>0 %}
+   <div class="span12"> 
+        <form id="reset_form" action="{{ path(main_path) }}" method="post" {{ form_enctype(filterForm) }}>
+             <button type="submit" name="filter_action" value="reset">{{ 'views.index.filterreset'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}</button>             
+        </form> 
+    </div>
+  {% endif %}
+    <div class="span12">
+        <div id="filters" class="collapse">
+            <form class="well" action="{{ path(main_path) }}" method="post" {{ form_enctype(filterForm) }}>
+                 {% if user_role_id==role_admin_id or user_role_id==role_event_leader_id %} 
+                   {{ form_row(filterForm.gradeLevelId) }}
+                {% endif%}
+                 {% if user_role_id==role_admin_id or user_role_id==role_event_leader_id %} 
+                        {{ form_row(filterForm.tableId) }}
+                 {% endif%}
+                {{ form_rest(filterForm) }}
+                <p>
+                    <button type="submit" name="filter_action" value="filter">{{ 'views.index.filter'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}</button>
+                    <button type="submit" name="filter_action" value="reset">{{ 'views.index.filterreset'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}</button>   
+                </p>
+            </form>
+        </div>
+    </div> 
+    {% else %}
+        <div class="span12"></div>
+    {% endif %}
+      
+  
+    <div class="span11">
+</br>
+    <table  class="table table-striped table-condensed">
+    <thead>
+        <tr>
+            <th>Grade Level</th> 
+            <th>Block</th>
+            <th>Table</th>
+            <th>Prompt</th>
+            <th>Active</th>
+        </tr>
+    </thead>
+    <tbody>
+    
+    {% for entity in entities %}
+           <tr>
+            <td>{{ entity.eventGradeLevelBlock.gradeLevel }}</td>
+           <td>{{ entity.eventGradeLevelBlock.blockId }}</td>
+           <td>{{ entity.tableId }}</td>
+           <td>{{ entity.prompt }}</td>
+            <td>{{ entity.eventGradeLevelBlock.isActive }}</td>
+            
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<div class="span4">
+    {{ pagerHtml|raw }}
+    </div>
+
+    </div>
+    
+  </div>
+
+{% endblock %}

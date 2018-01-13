@@ -1,0 +1,30 @@
+{% extends 'NwpAssessmentBundle::layout.html.twig' %}
+
+{% block title %}Contact{% endblock%}
+
+{% block body %}
+<header>
+    <h3 class="title">Contact NWP</h3>
+</header>
+
+{% for flashMessage in app.session.flashbag.get('blogger-notice') %}
+    <div class="blogger-notice">
+        {{ flashMessage }}
+    </div>
+{% endfor %}
+
+<form action="{{ path('NwpAssessmentBundle_pages_contact') }}" method="post" {{ form_enctype(form) }} class="blogger">
+        {{ form_errors(form) }}
+
+        {{ form_row(form.name) }}
+        {{ form_row(form.email) }}
+        {{ form_row(form.subject) }}
+        {{ form_row(form.body) }}
+
+        {{ form_rest(form) }}
+
+        <input type="submit" value="Submit" />
+    </form>
+ <p>Return to <a href="{{ path('fos_user_security_login') }}">log-in</a> page.</p>
+       
+{% endblock %}

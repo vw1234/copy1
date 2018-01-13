@@ -1,0 +1,109 @@
+{% extends 'NwpAssessmentBundle::layout.html.twig' %}
+
+{% block title %}
+{{ parent() }} - Attendees {{ 'views.index.list'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}
+{% endblock %}
+{% block page %}
+{% if user_role_id==role_admin_id and warning_msg==true%}
+<div class="alert alert-error">Target Total is less than 100% for the following Grade Levels:
+<table width="200">
+{% for key, grade_level in grade_level_array %} 
+{% if key!=0 and target_count_array[key]['target_total'] < 100 %}
+<tr>
+    <td><strong>{{grade_level}}</strong></td>
+    <td><strong>{{target_count_array[key]['target_total'] }}%</strong></td>
+</tr>
+{% endif %} 
+{% endfor %} 
+</table></br>
+</div>
+{% endif %}  
+{% block javascript %}
+<script>
+$(document).ready(function () {
+  $('#myTab a:first').tab('show'); // Select first tab on initial page load
+});
+</script>
+{% endblock %}
+ <div class="row">
+<div class="span8">
+<ul class="nav nav-tabs" id="myTab">
+    <h3 class="title">Attendees</h3>
+{% for key, grade_level in grade_level_array %}
+{% if key==0 %}
+    <h4 >{{entities[0].event.name}}</h4>
+    {% for u in range(0, entities_array[key][0]['firstname']|length-1) %}
+        <h5 >{{entities_array[key][0]['firstname'][u]}} {{entities_array[key][0]['lastname'][u]}} - {{entities_array[key][0]['role'][u]}}</h5>
+    {% endfor %}
+{%else %}
+    <li><a href="#{{key}}" data-toggle="tab">Grade Level {{grade_level}}</a></li>
+{% endif %}
+    
+{% endfor %}
+</ul>
+ <div class="tab-content">
+ {% for key, grade_level in grade_level_array %}   
+    <div class="tab-pane" id="{{key}}">
+     <table class="table-condensed">
+    {% for subkey, p in entities_array[key] %} 
+        {% if subkey==0 %}
+        {% else %} 
+            <tr><th class="header" style="text-align:left">Table {{subkey}}</th></tr>
+        {% endif %}          
+        {%for u in range(0, entities_array[key][subkey]['firstname']|length-1) %}
+             {% if entities_array[key][subkey]['firstname'][u] is defined%}
+             {% set class="" %}
+             {% if ((user_role_id!=role_scorer1_id) and (user_role_id!=role_scorer2_id)) %}
+                {% set role=entities_array[key][subkey]['role'][u] %}
+             {% else %}
+                {% set role=entities_array[key][subkey]['role_display'][u] %}
+             {% endif %}
+              
+             {% if entities_array[key][subkey]['role'][u] != "Scorer 1" and entities_array[key][subkey]['role'][u] != "Scorer 2"%}
+                {% if user_role_id==role_admin_id and entities_array[key][subkey]['target'][u] is defined and entities_array[key][subkey]['target'][u] != ""%}
+                        <tr>
+                            <th style="text-align:left"> {{entities_array[key][subkey]['firstname'][u]}} {{entities_array[key][subkey]['lastname'][u]}}
+                            - {{role}} ({{entities_array[key][subkey]['target'][u]}}% target)</th>
+                         </tr>
+              {% else %}
+                  <tr>
+                            <th style="text-align:left"> {{entities_array[key][subkey]['firstname'][u]}} {{entities_array[key][subkey]['lastname'][u]}}
+                            - {{role}}</th>
+                         </tr>
+              {% endif %}
+                
+             {% else %}
+                {% if u%2==1%}
+                    <tr>
+                {% endif %}
+                {% if user_role_id==role_admin_id and entities_array[key][subkey]['target'][u] is defined and entities_array[key][subkey]['target'][u] != ""%}
+                    <td>  
+                      {{entities_array[key][subkey]['firstname'][u]}} {{entities_array[key][subkey]['lastname'][u]}} - {{role}} ({{entities_array[key][subkey]['target'][u]}}% target)
+                    </td>
+                 {% else %}
+                     <td>  
+                   {{entities_array[key][subkey]['firstname'][u]}} {{entities_array[key][subkey]['lastname'][u]}} - {{role}}
+                     </td>
+                  {% endif %}
+                {% if u%2!=1%}
+                    </tr>
+                 {% endif %}
+              {% endif %}
+             {% endif %}
+        {% endfor %}  
+            
+    {% endfor %}
+    
+    </table>
+    <p>
+   <hr class="horizontal-line" style="margin-top: 0px;margin-bottom: 0px;width:100%;">
+    {% if user_role_id==role_admin_id and key!=0 %}
+        <div class="header"><strong>Total Target for Grade Level {{grade_level}}: </td><td>{{target_count_array[key]['target_total']}}%</strong></div>
+     {% endif %}
+    </div> 
+ </p>
+ {% endfor %}
+</div> 
+</div> 
+</div>
+{% endblock %}

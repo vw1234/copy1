@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="ScoringItem" table="scoring_item">
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="studentId" type="integer" column="student_id" nullable="false"/>
+    <field name="ncesId" type="string" column="nces_id" length="12" nullable="true"/>
+    <field name="psId" type="string" column="ps_id" length="8" nullable="true"/>
+    <field name="districtId" type="integer" column="district_id" nullable="true"/>
+    <field name="ipedsId" type="integer" column="ipeds_id" nullable="true"/>
+    <field name="organizationName" type="string" column="organization_name" length="255" nullable="true"/>
+    <field name="classroomId" type="string" column="classroom_id" length="15" nullable="true"/>
+    <field name="teacherId" type="string" column="teacher_id" length="15" nullable="true"/>
+    <field name="fileName" type="string" column="file_name" length="100" nullable="true"/>
+    <field name="fileType" type="string" column="file_type" length="4" nullable="true"/>
+    <field name="dateUploaded" type="datetime" column="date_uploaded" nullable="false"/>
+    <many-to-one field="county" target-entity="County">
+      <join-columns>
+        <join-column name="county_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="state" target-entity="State">
+      <join-columns>
+        <join-column name="state_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="user" target-entity="FosUserUser">
+      <join-columns>
+        <join-column name="user_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="organizationType" target-entity="OrganizationType">
+      <join-columns>
+        <join-column name="organization_type_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="gradeLevel" target-entity="GradeLevel">
+      <join-columns>
+        <join-column name="grade_level_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="year" target-entity="Year">
+      <join-columns>
+        <join-column name="year_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="prompt" target-entity="Prompt">
+      <join-columns>
+        <join-column name="prompt_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="project" target-entity="Project">
+      <join-columns>
+        <join-column name="project_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="administrationTime" target-entity="AdministrationTime">
+      <join-columns>
+        <join-column name="administration_time_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>

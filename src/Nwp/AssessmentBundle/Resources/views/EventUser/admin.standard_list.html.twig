@@ -1,0 +1,9 @@
+{% extends 'SonataAdminBundle:CRUD:list.html.twig' %}
+{% block batch_actions %}
+    <select name="action">
+    {% for action, options in batchactions %}
+        <option value="{{ action }}">{{ options.label }}</option>
+    {% endfor %}
+    </select>
+    <input type="submit" class="btn btn-primary" value="{{ 'btn_batch'|trans({}, 'SonataAdminBundle') }}" />
+{% endblock %}

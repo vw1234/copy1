@@ -1,0 +1,10 @@
+{% extends '::base.html.twig' %}
+{% block content %}
+   {% block fos_user_content %}
+    {% include "SonataUserBundle:Profile:show_content.html.twig" %}
+    {% endblock fos_user_content %}
+<br/>
+
+<a href="{{ path('fos_user_resetting_request') }}">Click here to reset password</a>
+{% endblock %}
+

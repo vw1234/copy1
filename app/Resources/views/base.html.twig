@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+    <head> 
+        <meta http-equiv="Content-Type" content="text/html"; charset=utf-8" />
+        <title>{% block title %}NWP{% endblock %}</title>
+        <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" /> 
+        <link href="{{ asset('bundles/nwpassessment/css/bootstrap.css') }}" rel="stylesheet">
+        <link href="{{ asset('bundles/nwpassessment/css/bootstrap-responsive.css') }}" rel="stylesheet">
+        <link href="{{ asset('css/screen.css') }}" type="text/css" rel="stylesheet" />
+        <link href="{{ asset('bundles/nwpassessment/css/jquery.ui.1.12.1/themes/base/jquery-ui.min.css') }}" rel="stylesheet" >
+        <link type="text/css" href={{ asset('cometchat/cometchatcss.php') }} rel="stylesheet" charset="utf-8">
+        <style type="text/css">
+            body {
+                padding-top: 60px;
+                padding-bottom: 40px;
+            }
+            .sidebar-nav {
+                padding: 9px 0;
+            }
+            .table th, .table td { 
+                border-top: none; 
+            }  
+        </style>       
+        {% block stylesheets %}    
+        {% endblock %}
+        <script src="{{ asset('bundles/nwpassessment/js/jquery.min.js') }}"></script>
+        <script src="{{ asset('bundles/nwpassessment/js/bootstrap.js') }}"></script>
+        <script src="{{ asset('bundles/nwpassessment/js/jquery.ui.1.12.1/jquery-ui.js') }}"></script>
+        <script type="text/javascript" src={{ asset('cometchat/cometchatjs.php') }} charset="utf-8"></script>        
+    </head>
+<body>
+    <div class="navbar navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container-fluid"> 
+            <div class="brand">
+                <div class="logo">
+                    <img src="{{ asset('bundles/nwpassessment/images/logo_awc.png') }}">
+                </div>
+             </div>
+        </div>
+      </div>
+    </div>
+         <div class="container-fluid app-header">
+      <div class="navbar navbar">
+            <p class="navbar-text pull-right">  
+                {% if app.user.username is defined %}
+                    Logged in as <a href="#" class="navbar-link"><a class="navbar-link header" href="{{ path('fos_user_profile_show') }}">{{app.user.username}}</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a class="navbar-link header" href="{{ path('fos_user_security_logout') }}">Logout</a>
+                {% else %}
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="navbar-link header" href="{{ path('fos_user_security_login') }}">Login</a>
+                {% endif %}
+              </a>
+            </p>
+         {% render url('NwpAssessmentBundle_pages_topnav') %}
+          </div><!--/.nav-collapse -->    
+      </div>
+    <div class="container-fluid">
+        
+      <div class="row-fluid">
+          
+        <div class="span2">
+          {% if app.user.username is defined %}
+            {% render url('NwpAssessmentBundle_pages_nav') %}
+          {% endif %}
+        </div>
+        <div class="span9">     
+        <div class="row-fluid">  
+          {% if app.user.username is not defined %}
+        <div>
+       </div>
+        {% endif %}  
+        {% block body %}  
+       
+        {% endblock %}
+            
+        {% block content %}
+       
+        {% endblock %}       
+        </div><!--/row-->
+       </div><!--/span-->
+      </div><!--/row-->
+      <hr>
+      <footer>
+      <p>{% block footer %}Version 1.0{% endblock %}</p>
+      </footer>
+    </div><!--/.fluid-container-->
+  </body>
+</html>

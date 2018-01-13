@@ -1,0 +1,12 @@
+{% extends '::base_popup.html.twig' %}
+{% block title %}
+{{ parent() }} - An Error Occurred: {{ status_code }} {{ status_text }}
+{% endblock %}
+{% block body %}
+    <h3 class="title">An Error Occurred: Page Not Found</h3>
+    <div>
+    Please e-mail NWP at <a href="mailto:{{ nwp_assessment_support_email }}">{{ nwp_assessment_support_email }}</a> and let us know
+    what you were doing when this error occurred.</br>
+    We will fix it as soon as possible. Sorry for any inconvenience caused.  Thank you!
+    </div>
+{% endblock %}

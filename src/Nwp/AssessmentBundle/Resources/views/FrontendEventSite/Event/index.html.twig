@@ -1,0 +1,58 @@
+{% extends 'NwpAssessmentBundle::layout.html.twig' %}
+
+{% block title %}
+{{ parent() }} - Event {{ 'views.index.list'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}
+{% endblock %}
+
+{% block page %}
+<div class="span8">
+        <h3 class="title">Current Event {{ 'views.index.list'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}</h3>
+        {% if (app.session.get('EventCountUserSession') >1)%}
+            <h5>You are registered for multiple current or upcoming events.  Please click the "Set Event" button next to the Event you would like to access.</h5>
+         {% elseif  (app.session.get('EventCountUserSession') ==0)%}
+            <h5>You are not granted access for any current or upcoming events.</h5>
+         {% endif %}
+    </div>
+<div class="row">
+ <div class="span8"></div>
+    <div class="span11">
+    <table class="table table-striped table-bordered table-condensed">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Description</th>
+            <th>Role</th>
+            <th>{{ 'views.index.actions'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for key, entity in entities %}
+        <tr>
+            <td><a href="{{ path('eventsite_event_show', { 'id': entity.id}) }}">{{ entity.id }}</a></td>
+            <td>{{ entity.name }}</td>
+            <td>{% if entity.startDate %}{{ entity.startDate|date('Y-m-d H:i:s') }}{% endif %}</td>
+            <td>{% if entity.endDate %}{{ entity.endDate|date('Y-m-d H:i:s') }}{% endif %}</td>
+            <td>{{ entity.description }}</td>
+            <td>{{event_capability_array[entity.id][0]['role_name']}}</td>
+            <td>
+        <a class="btn btn-mini" href="{{ path('eventsite_event_show', { 'id': entity.id}) }}">
+           Event Details
+        </a>
+        <a class="btn btn-mini" href="{{ path('eventsite_event_show', { 'id': entity.id,'score': 1 }) }}">
+            Set Event
+        </a>
+        </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+    </div>
+
+   
+      
+    </div>
+
+{% endblock %}

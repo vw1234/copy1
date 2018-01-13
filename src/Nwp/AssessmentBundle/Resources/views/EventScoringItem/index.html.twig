@@ -1,0 +1,149 @@
+{% extends 'NwpAssessmentBundle::layout.html.twig' %}
+
+{% block title %}
+{{ parent() }} - View Papers
+{% endblock %}
+
+{% block page %}
+
+<div class="span8" >
+    <h3 class="title">View Papers</h3>
+</div> 
+<div class="row">  
+    <div class="span2">
+        {% if form_errors(filterForm) %}
+        <div class="alert alert-block alert-error fade in form-errors">
+            {{ form_errors(filterForm) }}
+        </div>
+        {% endif %}
+        &nbsp;
+    </div>   
+    <div class="span2">
+        <div class="filters-right">
+            <a class="btn dropdown-toggle" data-toggle="collapse" data-target="#filters">
+                {{ 'views.index.filters'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}
+                <span class="caret"></span>
+            </a>
+        </div>
+    </div>
+    <div class="span12">
+        <div id="filters" class="collapse">
+
+            <form class="well" action="{{ path('projectsite_eventscoringitem') }}" method="post" {{ form_enctype(filterForm) }}>
+                <table>
+                    {% for filter in filterForm %} 
+                       {% if "hidden" not in filter.vars.block_prefixes %} {#do not list hidden fields#}
+                            <tr><td>{{ form_label(filter) }}</td><td>{{ form_errors(filter) }}</td><td>{{ form_widget(filter) }}</td></tr>
+                        {% endif %}
+                    {% endfor %}   
+                </table>
+                {{ form_rest(filterForm) }}
+
+                <p>
+                    <button type="submit" name="filter_action" value="filter">{{ 'views.index.filter'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}</button>
+                    <button type="submit" name="filter_action" value="reset">{{ 'views.index.filterreset'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}</button>           
+                </p>
+            </form>
+        </div>
+    </div>
+
+ <div class="span11">
+
+  <form action="{{ path('projectsite_eventscoringitem') }}" method="post" >
+    <table width="100%" class="table table-striped table-condensed">
+    <thead>
+        <tr>
+             <th></th>
+            <th>Id</th>
+            <th>Event</th>
+            {% if role_admin_id !="" %}
+                <th>Project</th>
+            {% endif %}
+            <th>Grade Level</th>
+            <th>Component</th>
+            <th>Paper Id</th>
+            <th>Date Updated</th>
+            <th>{{ 'views.index.actions'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% set batch_capability_count = 0 %} 
+    {% set batch_capability_count_delete = 0 %} 
+    {% set batch_capability_count_unassign = 0 %} 
+    {% for entity in entities %}
+       {% set edit = false %}
+       {% set delete = false %}
+       {% set unassign = false %}
+       {% set item_path = 'projectsite_eventscoringitem_show' %}
+       
+       {% if project_event_capability_array[entity.scoringItem.project.id][entity.event.id] is defined %}
+            {% for c in project_event_capability_array[entity.scoringItem.project.id][entity.event.id] %}
+           
+                {% if c.action_name=="edit" and c.object=="EventScoringItem" %}
+                    {% set edit = true %}
+                    {% set batch_capability_count = batch_capability_count+1 %} 
+                {% endif %}
+                {% if c.action_name=="delete" and c.object=="EventScoringItem" %}
+                    {% set delete = true %}
+                    {% set batch_capability_count_delete = batch_capability_count_delete+1 %} 
+                {% endif %}
+                {% if c.action_name=="unassign" and c.object=="EventScoringItem" %}
+                    {% set unassiagn = true %}
+                    {% set batch_capability_count_unassign = batch_capability_count_unassign+1 %} 
+                {% endif %}
+            {% endfor %}
+       {% endif %}
+        <tr>
+            {% if edit==true or delete==true or unassign==true%}
+                <td><input type="checkbox" name="idx[]" value="{{ entity.id }}" /></td>
+             {% else %}
+               <td></td>
+            {% endif %}
+            <td><a href="{{ path(item_path, { 'id': entity.id }) }}">{{ entity.id }}</a></td>
+            <td>{{ entity.event }}</td>
+            {% if role_admin_id !="" %}
+                <td>{{ entity.scoringItem.project }}</td>
+            {% endif %}
+            <td>{{ entity.scoringItem.gradeLevel }}</td>
+            <td>{{ entity.component }}</td>
+             <td>{{ entity.scoringitem }}</td>
+            <td>{% if entity.dateUpdated %}{{ entity.dateUpdated|date('Y-m-d') }}{% endif %}</td>
+            <td>
+                <a class="btn" href="{{ path('projectsite_eventscoringitem_show', { 'id': entity.id }) }}">
+                {{ 'views.recordactions.show'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}
+                </a> 
+            </td>         
+        </tr>
+      
+    {% endfor %}
+    </tbody>
+</table>
+           <div class="float-left">
+        {% if (batch_capability_count_unassign>0) or(batch_capability_count_delete>0) %}
+         </br>
+         <p><input type="checkbox" name="all_elements"/> All elements (this checkbox will be ignored if any items above are checked)</br></p>
+        <p><select name="action">
+             {% if batch_capability_count_unassign>0 %}
+                <option value="unassign">Unassign from Event</option>
+                <option value="export">Export data to Excel</option>
+             {% endif %}
+             {% if batch_capability_count_delete>0 %}
+                <option value="delete">Delete</option>
+              {% endif %}
+               
+            
+        </select></p>
+        <p>
+        <button type="submit" class="btn" name="btn_batch_action" value="btn_batch_action">OK</button>
+       </p>
+       {% endif %}
+       </div>
+  </form>                                          
+    </div>
+
+    <div class="span4">
+    {{ pagerHtml|raw }}
+    </div>
+</div>
+
+{% endblock %}

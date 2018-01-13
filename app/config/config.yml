@@ -1,0 +1,211 @@
+parameters:
+    # Contact email address - real address goes here
+    # In dev environment can be overwrittenin in swiftmailed function with delivery_address
+   # nwp_assessment.contact_email: awc@nwp.org
+   # nwp_assessment.support_email: awc-support@nwp.org
+    nwp_assessment.contact_email: sepstein@nwp.org
+    nwp_assessment.support_email: sepstein@nwp.org    
+    nwp_assessment.file_uploads: app/uploads
+    sonata.user.admin.user.class: Nwp\AssessmentBundle\Admin\UserAdmin
+    
+sonata_admin:
+    persist_filters: true
+    title: NWP Assessment Admin
+    templates:
+            layout: NwpAssessmentBundle::admin_standard_layout.html.twig
+    
+services:
+    nwp.assessment.admin.project:
+        class: Nwp\AssessmentBundle\Admin\ProjectAdmin
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: Projects, label: Projects }
+        arguments: [null, Nwp\AssessmentBundle\Entity\Project, NwpAssessmentBundle:ProjectAdmin]
+        
+    nwp.assessment.admin.projectuser:
+        class: Nwp\AssessmentBundle\Admin\ProjectUserAdmin
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: Projects, label: Project Staff }
+        arguments: [null, Nwp\AssessmentBundle\Entity\ProjectUser, NwpAssessmentBundle:ProjectUserAdmin]
+        
+    nwp.assessment.admin.event:
+        class: Nwp\AssessmentBundle\Admin\EventAdmin
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: Events, label:Events }
+        arguments: [null, Nwp\AssessmentBundle\Entity\Event, NwpAssessmentBundle:EventAdmin]
+        
+    nwp.assessment.admin.eventroom:
+        class: Nwp\AssessmentBundle\Admin\EventRoomAdmin
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: Events, label:Rooms }
+        arguments: [null, Nwp\AssessmentBundle\Entity\EventUser, NwpAssessmentBundle:EventRoomAdmin]
+        
+    nwp.assessment.admin.eventtable:
+        class: Nwp\AssessmentBundle\Admin\EventTableAdmin
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: Events, label:Tables }
+        arguments: [null, Nwp\AssessmentBundle\Entity\EventUser, NwpAssessmentBundle:EventTableAdmin]
+        
+    nwp.assessment.admin.eventuser:
+        class: Nwp\AssessmentBundle\Admin\EventUserAdmin
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: Events, label: Attendees }
+        arguments: [null, Nwp\AssessmentBundle\Entity\EventUser, NwpAssessmentBundle:EventUserAdmin]
+        
+    nwp.assessment.admin.eventgradelevelblock:
+        class: Nwp\AssessmentBundle\Admin\EventGradeLevelBlockAdmin
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: Blocks, label: Blocks }
+        arguments: [null, Nwp\AssessmentBundle\Entity\EventGradeLevelBlock, NwpAssessmentBundle:EventGradeLevelBlockAdmin]
+    
+    nwp.assessment.admin.eventgradelevelblockprompt:
+        class: Nwp\AssessmentBundle\Admin\EventGradeLevelBlockPromptAdmin
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: Blocks, label: Block Prompts}
+        arguments: [null, Nwp\AssessmentBundle\Entity\EventGradeLevelBlockPrompt, NwpAssessmentBundle:EventGradeLevelBlockPromptAdmin]
+        
+    nwp.assessment.admin.grouping:
+        class: Nwp\AssessmentBundle\Admin\GroupingAdmin
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: Grouping, label: Event Groups }
+        arguments: [null, Nwp\AssessmentBundle\Entity\Grouping, NwpAssessmentBundle:GroupingAdmin]
+        
+    nwp.assessment.admin.groupingtype:
+        class: Nwp\AssessmentBundle\Admin\GroupingTypeAdmin
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: Grouping, label: Event Group Types }
+        arguments: [null, Nwp\AssessmentBundle\Entity\GroupingType, NwpAssessmentBundle:GroupingTypeAdmin]
+        
+    nwp.registration.form.type:
+        class: Application\Sonata\UserBundle\Form\Type\RegistrationFormType
+        arguments: [%fos_user.model.user.class%]
+        tags:
+            - { name: form.type, alias: nwp_user_registration }
+        
+    
+sonata_block:
+    default_contexts: [cms]
+    blocks:
+        sonata.admin.block.admin_list:
+            contexts:   [admin]
+
+        #sonata.admin_doctrine_orm.block.audit:
+        #    contexts:   [admin]
+
+        sonata.block.service.text:
+        sonata.block.service.rss:
+
+        # Some specific block from the SonataMediaBundle
+        #sonata.media.block.media:
+        #sonata.media.block.gallery:
+        #sonata.media.block.feature_media:
+        
+sonata_cache:
+    caches:
+        esi:
+            servers:
+                - varnishadm -T 127.0.0.1:2000 {{ COMMAND }} "{{ EXPRESSION }}"
+
+        #mongo:
+        #    database:   cache
+        #    collection: cache
+        #    servers:
+        #        - {host: 127.0.0.1, port: 27017, user: username, password: pASS'}
+        #        - {host: 127.0.0.2}
+
+        #memcached:
+           # prefix: test     # prefix to ensure there is no clash between instances
+           # servers:
+           #     - {host: 127.0.0.1, port: 11211, weight: 0}
+
+        #apc:
+        #    token:  s3cur3   # token used to clear the related cache
+        #    prefix: test     # prefix to ensure there is no clash between instances
+        #    servers:
+        #        - { domain: kooqit.local, ip: 127.0.0.1, port: 80}
+                
+fos_user:
+    db_driver: orm
+    firewall_name: main
+    user_class: Application\Sonata\UserBundle\Entity\User
+    group:
+        group_class: Application\Sonata\UserBundle\Entity\Group
+    registration:
+        form:
+            type: nwp_user_registration
+    
+imports:
+    - { resource: parameters.yml }
+    - { resource: security.yml }
+   # - { resource: @BloggerBlogBundle/Resources/config/config.yml }
+
+framework:
+    #esi:             ~
+    #translator:      { fallback: %locale% }
+    translator: ~
+    secret:          %secret%
+    router:
+        resource: "%kernel.root_dir%/config/routing.yml"
+        strict_requirements: %kernel.debug%
+    form:            true
+    csrf_protection: true
+    validation:      { enable_annotations: true }
+    templating:      { engines: ['twig'] } #assets_version: SomeVersionScheme
+    default_locale:  %locale%
+    #trust_proxy_headers: false # Whether or not the Request object should trust proxy headers (X_FORWARDED_FOR/HTTP_CLIENT_IP)
+    #session:         ~
+    session:
+      cookie_lifetime: 86400
+      gc_maxlifetime: 3600
+      gc_probability:     0
+      gc_divisor:         1
+      save_path: ~
+      
+# Twig Configuration
+twig:
+    debug:            %kernel.debug%
+    strict_variables: %kernel.debug%
+    globals:
+      nwp_assessment_support_email: %nwp_assessment.support_email%
+    form:
+        resources:
+            - LexikFormFilterBundle:Form:form_div_layout.html.twig
+
+# Assetic Configuration
+assetic:
+    debug:          %kernel.debug%
+    use_controller: false
+    bundles:        [ ]
+    #java: /usr/bin/java
+    filters:
+        cssrewrite: ~
+        #closure:
+        #    jar: %kernel.root_dir%/Resources/java/compiler.jar
+        #yui_css:
+        #    jar: %kernel.root_dir%/Resources/java/yuicompressor-2.4.7.jar
+        
+
+doctrine:
+    dbal:
+        driver:   %database_driver%
+        host:     %database_host%
+        port:     %database_port%
+        dbname:   %database_name%
+        user:     %database_user%
+        password: %database_password%
+        charset:  UTF8
+        types:
+           json: Sonata\Doctrine\Types\JsonType
+
+    orm:
+        auto_generate_proxy_classes: %kernel.debug%
+        auto_mapping: true
+   
+   
+
+# Swiftmailer Configuration
+swiftmailer:
+    transport: %mailer_transport%
+    host:      %mailer_host%
+    username:  %mailer_user%
+    password:  %mailer_password%
+    #spool:     { type: memory }

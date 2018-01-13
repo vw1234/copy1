@@ -1,0 +1,73 @@
+{% extends 'NwpAssessmentBundle::layout.html.twig' %}
+
+{% block title %}
+{{ parent() }} - Upload Papers
+{% endblock %}
+{% block stylesheets %}
+    <link href="{{ asset('bundles/nwpassessment/css/fineuploader-3.3.0.css') }}" type="text/css" rel="stylesheet" />       
+{% endblock %}
+{% block page %}
+     <script src="{{ asset('bundles/nwpassessment/js/fineuploader/jquery.fineuploader-3.3.0.js') }}" ></script> 
+    <script>
+      $(document).ready(function () {
+        
+        $('#jquery-wrapped-fine-uploader').fineUploader({
+          request: {
+            endpoint: '{{ path('projectsite_scoringitem_new_multiple_papers_upload') }}'//,
+            //params: {project_id:1}
+          },
+          failedUploadTextDisplay: {
+            mode: 'custom',
+            maxChars: 100,
+            responseProperty: 'error',
+            enableTooltip: true
+          },
+         
+          debug: true
+         }).on('submit', function (event, fileId, fileName) {
+              if (($("#file_upload_form_project").length >0)  && ($("#file_upload_form_project").val() !="")) {          
+                var project_id =  $("#file_upload_form_project").val();
+              } else {
+                var project_id = {{ project_id }}; 
+              }
+               $('#jquery-wrapped-fine-uploader').fineUploader('setParams', { 'project_id': project_id});
+           });   
+       });
+    </script>
+<h3 class="title">Upload Papers</h3>
+<br>
+<h4>Step 1: Upload records to the database</h4>
+<form class="well" name="csv_upload_form" action="{{ path('projectsite_scoringitem_new_multiple')}}" method="post" {{ form_enctype(form1) }}>
+    {{ form_widget(form1) }}
+    <p><p>
+         {% if upload_type=="paper" %}
+        <p><select name="action">
+            <option value="create">Create New</option>
+           
+                <option value="update">Update Existing</option>
+          
+        </select></p>
+          {% endif %}
+        <p>
+        <button type="submit" class="btn" name="btn_batch_action" value="btn_batch_action" onclick="return confirm('Are you sure you would like to execute the selected action for all records in the file?');">OK</button>
+       </p>
+    </p>
+</p>
+</form>
+
+<h4>Step 2: Copy papers to the server</h4>
+  <form class="well" name="file_upload_form" action="{{ path('projectsite_scoringitem_new_multiple')}}" method="post" {{ form_enctype(form2) }}>
+    {{ form_widget(form2) }}        
+ <div id="jquery-wrapped-fine-uploader"></div>
+ </form>
+</br>
+
+<div>
+    <div class="float-left">
+        <a class="btn" href="{{ path('projectsite_scoringitem') }}">
+            {{ 'views.recordactions.backtothelist'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}
+        </a>
+    </div>
+</div>
+
+{% endblock %}

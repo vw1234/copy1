@@ -1,0 +1,160 @@
+/*
+ * CometChat
+ * Copyright (c) 2016 Inscripts - support@cometchat.com | http://www.cometchat.com | http://www.inscripts.com
+*/
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, font, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	font-weight: inherit;
+	font-style: inherit;
+	font-size: 100%;
+	font-family: inherit;
+	vertical-align: baseline;
+}
+
+html, body {
+	overflow: hidden;
+	background: <?php echo $themeSettings['light_grey_color'];?>;
+	direction: <?php echo $dir;?>;
+}
+
+ul {
+  float: <?php echo $left;?>;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  padding-<?php echo $left;?>: 15px;
+}
+
+
+li:before {
+    background: url("themes/<?php echo $theme;?>/images/bullet.png") no-repeat scroll rgba(0, 0, 0, 0);
+    content: "";
+    height: 10px;
+    position: absolute;
+    left: -8px;
+    top: 2px;
+    width: 10px;
+    background-position: 0 1px;
+    <?php if ($rtl):?>
+    background-position: 0 -8px;
+    right: -13px;
+    left: 0;
+    <?php endif;?>
+}
+
+li {
+  position: relative;
+  float: float: <?php echo $left;?>;
+  width: 130px;
+  margin: 0;
+  height: 20px;
+  padding: 0px;
+  cursor: pointer;
+}
+
+.cometchat_wrapper {
+	width:98%;
+	margin:0 auto;
+	/*margin-top: 5px;*/
+	background-color: <?php echo $themeSettings['light_grey_color'];?>;
+	border-top: 1px solid <?php echo $themeSettings['border_color'];?>;
+}
+
+.container_title {
+	/*background-color: <?php echo $themeSettings['tab_title_background'];?> !important;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='<?php echo $themeSettings['tab_title_gradient_start'];?>', endColorstr='<?php echo $themeSettings['tab_title_gradient_end'];?>');
+	background: -webkit-gradient(linear, left top, left bottom, from(<?php echo $themeSettings['tab_title_gradient_start'];?>), to(<?php echo $themeSettings['tab_title_gradient_end'];?>));
+	background: -moz-linear-gradient(top, <?php echo $themeSettings['tab_title_gradient_start'];?>, <?php echo $themeSettings['tab_title_gradient_end'];?>);
+	background: -ms-linear-gradient(top, <?php echo $themeSettings['tab_title_gradient_start'];?>, <?php echo $themeSettings['tab_title_gradient_end'];?>);
+	background: -o-linear-gradient(top, <?php echo $themeSettings['tab_title_gradient_start'];?>, <?php echo $themeSettings['tab_title_gradient_end'];?>);
+	border-left: 1px solid <?php echo $themeSettings['tab_title_border'];?>;
+	border-right: 1px solid <?php echo $themeSettings['tab_title_border'];?>;
+	border-top: 1px solid <?php echo $themeSettings['tab_title_border'];?>;*/
+	/*color: <?php echo $themeSettings['tab_title_color'];?>;*/
+	color: #666;
+	font-family: <?php echo $themeSettings['font_family'];?>;
+	font-size: <?php echo $themeSettings['font_size_mid'];?>;
+	padding: 5px;
+	/*font-weight: bold;
+	padding-left: 10px;
+	padding-bottom: 6px;*/
+	/*text-shadow: 1px 1px 0 <?php echo $themeSettings['tab_title_text_background'];?>;*/
+}
+
+.container_body {
+	/*border-left: 1px solid <?php echo $themeSettings['border_color'];?>;
+	border-bottom: 1px solid <?php echo $themeSettings['border_color'];?>;
+	border-right: 1px solid <?php echo $themeSettings['border_color'];?>;*/
+	background-color: <?php echo $themeSettings['color_white'];?>;
+	color: <?php echo $themeSettings['color_grey'];?>;
+	padding: 0px 5px;
+	font-weight: normal;
+	font-family: <?php echo $themeSettings['font_family'];?>;
+	font-size: <?php echo $themeSettings['font_size_mid'];?>;
+	height: 85px;
+}
+
+
+.container_title.embed {
+	/*display: none;*/
+}
+
+#languages {
+	height: 85px;
+}
+
+#transliteratebox {
+	width: 100%;
+	height: 85px;
+	border: 1px solid <?php echo $themeSettings['border_color'];?>;
+	margin-top: 10px;
+}
+
+a {
+	color: <?php echo $themeSettings['primary_color'];?>;
+	font-size: <?php echo $themeSettings['font_size_mid'];?>;
+}
+
+#send {
+	margin-top: 5px;
+	float: <?php echo $left;?>
+}
+
+#change {
+	float:<?php echo $right;?>;
+	padding: 5px;
+	padding-<?php echo $right;?>: 0px;
+}
+
+.button {
+	background-color: <?php echo $themeSettings['primary_color'];?>;
+	color: <?php echo $themeSettings['color_white'];?>;
+	font-family: <?php echo $themeSettings['font_family'];?>;
+	font-size: <?php echo $themeSettings['font_size_mid'];?>;
+	cursor: pointer;
+	padding: 7px;
+	outline: 0;
+	border: 0;
+	border-radius: 25px;
+	max-width: 90px;
+	width: 75px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+textarea {
+    resize: none;
+}

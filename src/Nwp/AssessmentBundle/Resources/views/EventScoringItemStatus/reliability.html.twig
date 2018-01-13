@@ -1,0 +1,134 @@
+{% extends 'NwpAssessmentBundle::layout.html.twig' %}
+{% block title %}
+{{ parent() }} - Reliability {{ 'views.index.list'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}
+{% endblock %}
+
+{% block page %}
+<div class="span8">
+       <h3 class="title">Reliability</h3>
+    </div>
+<div class="row">   
+</div>
+{% if (reliability_count_array[0]['paper_count']>0)%}
+<h4 class="header">Reliability of Double-Scored Attributes by Grade Level</h4>
+<table width="75%" class="table-condensed table-striped table-fixed">
+    <thead>
+        <tr>
+            <th></th>
+            <th>Papers Double-Scored</th>
+             <th>Overall</th>
+            {% for a in attributes %}
+                <th >{{a.name}}</th>
+            {%  endfor %}
+        </tr>
+    </thead>
+    <tbody> {% for key, grade_level in grade_level_array %}
+              <tr>  
+                  <td>Grade Level {{grade_level.grade_level_name}}</td>
+                  <td style="text-align:center">{{reliability_count_array[key][0]['paper_count']}}</td>
+                   <td style="text-align:center">{{(((reliability_count_array[key][0]['total'] - reliability_count_array[key][0]['adjudicated'])/reliability_count_array[key][0]['total'])*100)|number_format(1)}}%</td>
+                  {% for a in attributes %}
+                     <td style="text-align:center">
+                    {% if reliability_count_array[key][a.id]['total'] is defined %}
+                       {% if reliability_count_array[key][a.id]['adjudicated'] is defined %}
+                            {{(((reliability_count_array[key][a.id]['total'] - reliability_count_array[key][a.id]['adjudicated'])/reliability_count_array[key][a.id]['total'])*100)|number_format(1)}}%
+                       {% else %}
+                            100%
+                       {% endif %}
+                       
+                    {% else %}
+                        0
+                    {% endif %}
+                      </td>
+                 {% endfor %}
+              </tr>
+              {% endfor %}
+              {% if grade_level_array|length>1%}
+              <tr>  
+                  <td>Total</td>
+                  <td style="text-align:center">{{reliability_count_array[0]['paper_count']}}</td>
+                  <td style="text-align:center">{{(((reliability_count_array_total['total'] - reliability_count_array_total['adjudicated'])/reliability_count_array_total['total'])*100)|number_format(1)}}%</td>
+                 {% for a in attributes %}
+                   
+                     <td style="text-align:center">
+                    {% if reliability_count_array_attribute[a.id]['total'] is defined%}
+                       {% if reliability_count_array_attribute[a.id]['adjudicated'] is defined%}
+                            {{(((reliability_count_array_attribute[a.id]['total'] - reliability_count_array_attribute[a.id]['adjudicated'])/reliability_count_array_attribute[a.id]['total'])*100)|number_format(1)}}%
+                       {% else %}
+                            100%
+                       {% endif %}
+                    {% else %}
+                        0
+                    {% endif %}
+                      </td>
+                 {% endfor %}
+              </tr>
+               {% endif %}         
+    </tbody>
+</table>
+{% endif %}
+ </br></br>
+ {% if (reliability_results_by_prompt_count_array is defined and reliability_results_by_prompt_count_array|length > 0)%}
+ <h4 class="header">Reliability of Double-Scored Attributes by Prompt</h4>
+ {% for key, g in grade_level_array_prompt %}
+ <h5 class="header">Grade Level {{g.grade_level_name}}</h5>
+ <table width="75%" class="table-condensed table-striped table-fixed">
+  <thead>
+        <tr>
+            <th></th>
+            <th>Papers Double-Scored</th>
+             <th>Overall</th>
+            {% for a in attributes %}
+                <th >{{a.name}}</th>
+            {%  endfor %}
+        </tr>
+    </thead>
+    <tbody> 
+        {% for promptkey, prompt in prompt_array[key] %}
+              <tr>  
+                  <td>{{prompt.prompt_name}}</td>
+                   <td style="text-align:center">{{reliability_results_by_prompt_count_array[key][promptkey][0]['paper_count']}}</td>
+                   <td style="text-align:center">{{(((reliability_results_by_prompt_count_array[key][promptkey][0]['total'] - reliability_results_by_prompt_count_array[key][promptkey][0]['adjudicated'])/reliability_results_by_prompt_count_array[key][promptkey][0]['total'])*100)|number_format(1)}}%</td>
+                   {% for a in attributes %}
+                     <td style="text-align:center">
+                    {% if reliability_results_by_prompt_count_array[key][promptkey][a.id]['total'] is defined %}
+                       {% if reliability_results_by_prompt_count_array[key][promptkey][a.id]['adjudicated'] is defined %}
+                            {{(((reliability_results_by_prompt_count_array[key][promptkey][a.id]['total'] - reliability_results_by_prompt_count_array[key][promptkey][a.id]['adjudicated'])/reliability_results_by_prompt_count_array[key][promptkey][a.id]['total'])*100)|number_format(1)}}%
+                       {% else %}
+                            100%
+                       {% endif %}
+                       
+                    {% else %}
+                        0
+                    {% endif %}
+                      </td>
+                 {% endfor %}
+                </tr>
+                
+    {% endfor %}
+     {% if prompt_array[key]|length>1%}
+              <tr>  
+                  <td>Total</td>
+                  <td style="text-align:center">{{reliability_results_by_prompt_count_array[key][0]['paper_count']}}</td>
+                  <td style="text-align:center">{{(((reliability_results_by_prompt_count_array_total[key]['total'] - reliability_results_by_prompt_count_array_total[key]['adjudicated'])/reliability_results_by_prompt_count_array_total[key]['total'])*100)|number_format(1)}}%</td>
+                 {% for a in attributes %}
+                   
+                     <td style="text-align:center">
+                    {% if reliability_results_by_prompt_count_array_attribute[key][a.id]['total'] is defined%}
+                       {% if reliability_results_by_prompt_count_array_attribute[key][a.id]['adjudicated'] is defined%}
+                            {{(((reliability_results_by_prompt_count_array_attribute[key][a.id]['total'] - reliability_results_by_prompt_count_array_attribute[key][a.id]['adjudicated'])/reliability_results_by_prompt_count_array_attribute[key][a.id]['total'])*100)|number_format(1)}}%
+                       {% else %}
+                            100%
+                       {% endif %}
+                    {% else %}
+                        0
+                    {% endif %}
+                      </td>
+                 {% endfor %}
+              </tr>
+               {% endif %}  
+     </tbody>
+  </table>
+   {% endfor %}
+ {% endif %}
+{% endblock %}

@@ -1,0 +1,120 @@
+{% extends 'NwpAssessmentBundle::layout.html.twig' %}
+
+{% block title %}
+{{ parent() }} - Paper {{ 'views.new.creation'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}
+{% endblock %}
+
+{% block page %}
+{% set previous_scoringitem = app.request.query.get('previous_scoringitem')%}
+{% if previous_scoringitem !="" %}
+    {% set previous_scoringitem_querystring = "?previous_scoringitem="~ previous_scoringitem %}
+{% else %}
+    {% set previous_scoringitem_querystring =""%}
+{% endif %}
+{% block javascript %}
+<script src="{{ asset('bundles/nwpassessment/js/organization_type.js') }}"></script>
+<script>
+$(document).ready(function () {
+    getOrganizationType();
+    
+    $("#nwp_assessmentbundle_scoringitemtype_organizationType").change(function () {
+        getOrganizationType();
+    });
+    $("#nwp_assessmentbundle_scoringitemtype_state").change(function () {
+        $.ajax({
+        type: "GET",
+        data: "data=" + $(this).val(),
+        url:"{{ path('_countyByStateId') }}",
+        success: function(msg){
+            if (msg != ''){
+                $('#nwp_assessmentbundle_scoringitemtype_county').html(msg).show();
+            } else {
+                $('#nwp_assessmentbundle_scoringitemtype_county').html('<em>No counties are available</em>');
+            }
+        }
+       });
+    });
+     $("#nwp_assessmentbundle_scoringitemtype_project").change(function () {
+        $.ajax({
+        type: "GET",
+        data: "data_project=" + $(this).val(),
+        url:"{{ path('_promptByProjectId') }}",
+        success: function(msg){
+            if (msg != ''){
+                $('#nwp_assessmentbundle_scoringitemtype_prompt').html(msg).show();
+            } else {
+                $('#nwp_assessmentbundle_scoringitemtype_prompt').html('<em>No prompts are available</em>');
+            }
+        }
+       });
+    });
+});
+</script>
+{% endblock %}
+ <h3 class="title">Paper upload</h3>
+
+<form action="{{ path('projectsite_scoringitem_create', {'previous_scoringitem': previous_scoringitem }) }}" method="post" {{ form_enctype(form) }}>
+    <table>
+     <tr>
+        <td>{{ form_label(form.studentId) }}</td><td>{{ form_errors(form.studentId) }}</td><td>{{ form_widget(form.studentId) }}</td>
+     </tr>
+     <tr>
+        <td>{{ form_label(form.administrationTime) }}</td><td>{{ form_errors(form.administrationTime) }}</td><td>{{ form_widget(form.administrationTime) }}</td>
+     </tr>
+     <tr>
+        <td>{{ form_label(form.year) }}</td><td>{{ form_errors(form.year) }}</td><td>{{ form_widget(form.year) }}</td>  
+     </tr>
+      <tr>
+        <td>{{ form_label(form.project) }}</td><td>{{ form_errors(form.project) }}</td><td>{{ form_widget(form.project) }}</td>  
+     </tr>
+     <tr>
+        <td>{{ form_label(form.prompt) }}</td><td>{{ form_errors(form.prompt) }}</td><td>{{ form_widget(form.prompt) }}</td>  
+     </tr> 
+     <tr>
+        <td>{{ form_label(form.gradeLevel) }}</td><td>{{ form_errors(form.gradeLevel) }}</td><td>{{ form_widget(form.gradeLevel) }}</td>  
+     </tr>
+     <tr>
+        <td>{{ form_label(form.organizationType) }}</td><td>{{ form_errors(form.organizationType) }}</td><td>{{ form_widget(form.organizationType) }}</td>  
+     </tr>
+     <tr>
+        <td>{{ form_label(form.ncesId) }}</td><td>{{ form_errors(form.ncesId) }}</td><td>{{ form_widget(form.ncesId) }}</td>  
+     </tr>
+     <tr>
+        <td>{{ form_label(form.psId) }}</td><td>{{ form_errors(form.psId) }}</td><td>{{ form_widget(form.psId) }}</td>  
+     </tr>
+     <tr>
+        <td>{{ form_label(form.districtId) }}</td><td>{{ form_errors(form.districtId) }}</td><td>{{ form_widget(form.districtId) }}</td>  
+     </tr>
+     <tr>
+        <td>{{ form_label(form.ipedsId) }}</td><td>{{ form_errors(form.ipedsId) }}</td><td>{{ form_widget(form.ipedsId) }}</td>  
+     </tr>
+     <tr>
+        <td>{{ form_label(form.organizationName) }}</td><td>{{ form_errors(form.organizationName) }}</td><td>{{ form_widget(form.organizationName) }}</td>  
+     </tr>
+      <tr>
+        <td>{{ form_label(form.state) }}</td><td>{{ form_errors(form.state) }}</td><td>{{ form_widget(form.state) }}</td>  
+     </tr>
+     <tr>
+        <td>{{ form_label(form.county) }}</td><td>{{ form_errors(form.county) }}</td><td>{{ form_widget(form.county) }}</td>  
+     </tr>
+      <tr>
+        <td>{{ form_label(form.classroomId) }}</td><td>{{ form_errors(form.classroomId) }}</td><td>{{ form_widget(form.classroomId) }}</td>  
+     </tr>
+     <tr>
+        <td>{{ form_label(form.teacherId) }}</td><td>{{ form_errors(form.teacherId) }}</td><td>{{ form_widget(form.teacherId) }}</td>  
+     </tr>
+     
+    </table>
+        {{ form_row(form.file) }}   
+        {{ form_rest(form) }}
+    <p><p>
+        <button type="submit" class="btn btn-primary">{{ 'views.new.create'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}</button>
+         <button type="submit" class="btn" name="btn_create_and_add" value="btn_create_and_add">Create and add another</button>
+          <a class="btn" href="{{ path('projectsite_scoringitem') }}">
+            {{ 'views.recordactions.backtothelist'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}
+        </a>
+    </p>
+</form>
+
+
+{% endblock %}

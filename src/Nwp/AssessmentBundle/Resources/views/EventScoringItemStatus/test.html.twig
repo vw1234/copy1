@@ -1,0 +1,27 @@
+{% extends 'NwpAssessmentBundle::layout.html.twig' %}
+{% block title %}
+{{ parent() }} - Paper Status - Show {{ 'views.new.creation'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}
+{% endblock %}
+
+{% block page %}
+{% set reporting=false  %}
+{% set currentPath =path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params'))  %}
+{% set list_path = 'eventsite_eventscoringitemstatus'  %}
+ {% if '/reporting' in currentPath %}
+    {% set reporting=true  %}
+    {% set list_path = 'eventsite_reporting'  %}
+{% endif %}
+{% block javascript %}
+<script>
+$(document).ready(function () {
+  $(".disable").one('click',function(e){
+    $(this).attr('disabled', true);
+    $(this).on('click',function(ev){ //link can only be clicked once (prevents subsequent clicks)
+      ev.preventDefault();
+    });  
+  });
+});
+</script>
+{% endblock %}
+ <h3 class="title">We are in the Test Template!</h3>
+{% endblock %}

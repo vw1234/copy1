@@ -1,0 +1,30 @@
+{% extends 'NwpAssessmentBundle::layout.html.twig' %}
+
+{% block title %}
+{{ parent() }} - Paper - Batch Confirmation
+{% endblock %}
+
+{% block page %}
+<h1>Confirm batch action</h1>
+{% if ((request_data.all_elements is defined) and (request_data.all_elements) and (request_data.idx is not defined) )%}
+         {% set items_selected=true%}
+         Are you sure you want to confirm this action and execute it for ALL results listed in the List View ?    
+{% elseif ((request_data.idx is defined) and (request_data.idx ))%}
+         {% set items_selected=true%}
+        Are you sure you want to confirm this action and execute it for the {{request_data.idx|length}} selected elements?
+{% else %}
+        {% set items_selected=false%}
+       You have not selected any items for this action.  Please go back to the list and make your selection. 
+{% endif %}
+ 
+  <form class="well" action="{{ path(entity_path~'_batch_action_'~ request_data.action) }}" method="post" >
+ <div class="float-left">
+     
+     {%if items_selected==true %}<input type="submit" class="btn btn-primary" name="btn_batch_action_confirm" value="Yes, execute" /> or{% endif %}
+      <input type="hidden" name="request_data" value="{{ request_data|json_encode }}" />
+        <a class="btn" href="{{ path(entity_path) }}">
+            {{ 'views.recordactions.backtothelist'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}
+        </a>
+    </div>
+</form>
+{% endblock %}

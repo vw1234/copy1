@@ -1,0 +1,205 @@
+{% extends 'NwpAssessmentBundle::layout.html.twig' %}
+{% set main_path='eventsite_block'  %}
+{% set edit_path='eventsite_block_edit'  %}
+{% set show_path='eventsite_block_show'  %}
+
+{% block title %}
+{{ parent() }} - Scoring Blocks {{ 'views.index.list'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}
+{% endblock %}
+
+{% block page %}
+{% if user_role_id==role_admin_id and warning_msg==true%}
+<div class="alert alert-error">Target Total is less than 100% for the following Grade Levels:
+<table width="200">
+{% for key, grade_level in grade_level_array %} 
+{% if key!=0 and target_count_array[key]['target_total'] < 100 %}
+<tr>
+    <td><strong>{{grade_level}}</strong></td>
+    <td><strong>{{target_count_array[key]['target_total'] }}%</strong></td>
+</tr>
+{% endif %} 
+{% endfor %} 
+</table></br>
+</div>
+{% endif %} 
+<div class="span8">
+    <h3 class="title">Scoring Blocks</h3>
+</div>
+{% block javascript %}
+<script>
+function setBlock(event_type_id,id,is_active,block,grade_level_name,existing_block_active) {
+    //allow one block active at a time per room
+    //only for manual events, asyncrhonous can have any amount of blocks active at any one time
+    
+    if (is_active==0) { 
+        action="activate";
+        if ((event_type_id==1) && (existing_block_active !="")) {
+            alert("Block " + existing_block_active + " is currently active for ROOM " + grade_level_name + ". Please deactivate it first.");
+            return false;
+        }
+    } else {
+          action="deactivate";
+    }  
+    
+    if (block==null) {
+        block_msg="all blocks";
+    } else {
+        block_msg="block " + block;
+    }
+        
+    if (grade_level_name==null) {
+        grade_level_msg = "all rooms";
+    } else {
+        grade_level_msg = "Room " + grade_level_name;
+    }
+     
+    var confirmed=confirm("Are you sure you want to " + action + " " + block_msg + " for " + grade_level_msg + "?");
+    
+    if (confirmed==true) {
+            this.disabled=true;
+            this.value='Sending, please wait...';
+            this.form.submit();
+    } else {
+          return false; 
+    }
+
+  }
+ </script>
+{% endblock %}
+<div class="row">
+{% if ((user_role_id!=role_scorer1_id) and (user_role_id!=role_scorer2_id)) %}
+<div class="span2"> 
+        {% if form_errors(filterForm) %}
+        <div class="alert alert-block alert-error fade in form-errors">
+            {{ form_errors(filterForm) }}
+        </div>
+        {% endif %}
+        &nbsp;
+</div>
+    
+    <div class="span2">
+        <div class="filters-right">
+            <a class="btn dropdown-toggle" data-toggle="collapse" data-target="#filters">
+                {{ 'views.index.filters'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}
+                <span class="caret"></span>
+            </a>
+        </div>
+    </div>
+ 
+  {% if filterData|length>0 %}
+   <div class="span12"> 
+        <form id="reset_form" action="{{ path(main_path) }}" method="post" {{ form_enctype(filterForm) }}>
+             <button type="submit" name="filter_action" value="reset">{{ 'views.index.filterreset'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}</button>             
+        </form> 
+    </div>
+  {% endif %}
+    <div class="span12">
+        <div id="filters" class="collapse">
+            <form class="well" action="{{ path(main_path) }}" method="post" {{ form_enctype(filterForm) }}>
+                 {% if user_role_id==role_admin_id or user_role_id==role_event_leader_id %} 
+                   {{ form_row(filterForm.gradeLevelId) }}
+                {% endif%}
+                {{ form_rest(filterForm) }}
+                <p>
+                    <button type="submit" name="filter_action" value="filter">{{ 'views.index.filter'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}</button>
+                    <button type="submit" name="filter_action" value="reset">{{ 'views.index.filterreset'|trans({}, 'JordiLlonchCrudGeneratorBundle') }}</button>   
+                </p>
+            </form>
+        </div>
+    </div> 
+    {% else %}
+        <div class="span12"></div>
+    {% endif %}
+      
+  
+    <div class="span11">
+
+    <table  class="table table-striped table-condensed">
+    <thead>
+        <tr>
+            {% if ((user_role_id==role_admin_id) or (user_role_id==role_event_leader_id)) %}
+               <th>Grade Level</th> 
+            {% endif %}
+            <th>Block</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>Target</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% set active_count=0 %}
+    {% set deactive_count=0 %}
+    {% for entity in entities %}
+       {% set existing_block_active="" %}
+       {% if ((event_grade_level_block_active[entity.gradeLevel.id] is defined) and (event_grade_level_block_active[entity.gradeLevel.id] !="")) %}
+            {% set existing_block_active=event_grade_level_block_active[entity.gradeLevel.id] %}
+        {% endif %}
+           <tr>
+           <form id="block_form" class="well" action="{{ path(main_path) }}" method="post">
+            {% if ((user_role_id==role_admin_id) or (user_role_id==role_event_leader_id)) %}
+                <td>{{ entity.gradeLevel }}</td>
+            {% endif %}
+            <td><a href="{{ path('eventsite_block_show', { 'id': entity.id }) }}">{{ entity.blockId }}</a></td>
+           {% if entity.startDate %}
+                <td>{{ entity.startDate|date('m/d/y g:i A') }}</td>
+           {% else %}
+                <td></td>
+             {% endif %}
+            {% if (entity.isActive==1) %}
+                <td class="highlight">Currently Active</td>
+            {% elseif (entity.endDate) %}
+                <td> {{ entity.endDate|date('m/d/y g:i A') }}</td>
+            {% else %}
+                <td></td>
+             {% endif %}
+           {% if entity.target %}
+                <td>{{ entity.target}}%</td>
+           {% else %}
+                <td></td>
+             {% endif %}
+            <td>
+               
+             {% if entity.isActive==1 %}
+                 {% set active_count=active_count+1 %}
+                     <button class="btn" type="submit" name="btn_set_block" value="{{entity.id}}" onclick="setBlock({{event_type_id}},{{entity.id}},{{ entity.isActive }},{{ entity.blockId }},'{{entity.gradeLevel}}',{{existing_block_active}});return false;">Deactivate</button>
+             {% else %}
+                  {% set deactive_count=deactive_count+1 %}
+                     <button class="btn" type="submit" name="btn_set_block" value="{{entity.id}}" onclick="setBlock({{event_type_id}},{{entity.id}},0,{{ entity.blockId }},'{{entity.gradeLevel}}',{{existing_block_active}});return false;">Activate</button>
+            {% endif %}
+              <input type="hidden" id="is_active" name="is_active" value={{entity.isActive}}>      
+             </td>
+            </form>
+
+            </tr>
+        
+    {% endfor %}
+    <form id="block_form2" class="well" action="{{ path(main_path) }}" method="post">
+    {% if deactive_count>0 %}
+        <button class="btn" type="submit" name="btn_set_block" value="-1" onclick="setBlock({{event_type_id}},null,0,null,null,null);return false;">Activate All </button>
+     {% else %}
+         <button class="btn" type="submit" disabled="true">Activate All</button>
+     {% endif %}
+     <input type="hidden" id="is_active" name="is_active" value="0"> 
+         </form>
+     <form id="block_form3" class="well" action="{{ path(main_path) }}" method="post">
+     {% if active_count>0 %}
+         <button class="btn" type="submit" name="btn_set_block"value="-1" onclick="setBlock({{event_type_id}},null,1,null,null,null);return false;">Deactivate All</button>
+     {% else %}
+         <button class="btn" type="submit" disabled="true">Deactivate All</button>
+     {% endif %}
+     <input type="hidden" id="is_active" name="is_active" value="1"> 
+    </tbody>
+</table>
+      <hr class="horizontal-line" style="margin-top: 0px;margin-bottom: 0px;width:100%;">
+    {% if user_role_id==role_admin_id %}
+        {% for key, grade_level in grade_level_array %} 
+            <div class="header"><strong>Total Target for Grade Level {{grade_level}}: </td><td>{{target_count_array[key]['target_total']}}%</strong></div>
+        {% endfor %}
+    {% endif %}  
+    </div>
+
+  </div>
+<div class="span4">
+    {{ pagerHtml|raw }}
+    </div>
+{% endblock %}

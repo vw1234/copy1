@@ -1,0 +1,52 @@
+{% extends 'SonataAdminBundle::standard_layout.html.twig' %}
+
+{% block breadcrumb %}
+{#app.request.query.get('event')#}
+
+{% set currentPath =path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params'))  %}
+
+{% if '/event/' in currentPath or '/eventuser' in currentPath %}
+<a href="{{ path('admin_nwp_assessment_event_list') }}">All Events</a><span class="divider">/</span>
+ <a href="{{ path('nwp.assessment.admin.eventroom_list') }}">All Rooms</a><span class="divider">/</span>
+ <a href="{{ path('nwp.assessment.admin.eventtable_list') }}">All Tables</a><span class="divider">/</span>
+ <a href="{{ path('nwp.assessment.admin.eventuser_list') }}">All Attendees</a>
+ </br></br>           
+  {%if not ('/create' in currentPath) %}  
+    {% if object is defined and object %}      
+        {% if object.event is defined and object.event%}
+            <a href="{{ path('admin_nwp_assessment_event_edit', {'id': object.event.id}) }}">{{object.event}}</a><span class="divider">/</span>
+            <a href="{{ path('nwp.assessment.admin.eventroom_list', {'filter[event][type]': 1, 'filter[event][value]': object.event.id}) }}">Room List for {{object.event}}</a>
+        {% endif %}
+        {% if object.gradeLevel is defined and object.gradeLevel%}
+            <span class="divider">/</span>Room {{object.gradeLevel}}<span class="divider">/</span>
+            <a href="{{ path('nwp.assessment.admin.eventtable_list', {'filter[event][type]': 1, 'filter[event][value]': object.event.id, 'filter[gradeLevel][type]': 1, 'filter[gradeLevel][value]': object.gradeLevel.id})}}">Table List for Room {{object.gradeLevel}}</a>
+        {% endif %}
+        {% if object.tableId is defined  and object.tableId%}
+            <span class="divider">/</span>Table {{object.tableId}}
+        {% endif %}  
+    {% else %} 
+        {% if ((('eventuser-room/list' in currentPath) or ('eventuser-room/batch' in currentPath))   and (admin.datagrid.filters['event'].value['value'] !=""))%}
+             <a href="{{ path('admin_nwp_assessment_event_edit', {'id':admin.datagrid.filters['event'].value['value'].id}) }}">{{admin.datagrid.filters['event'].value['value']}}</a><span class="divider">/</span>Room List for {{admin.datagrid.filters['event'].value['value']}}
+        {% endif %}
+      
+        {% if 'eventuser-table/list' in currentPath  and admin.datagrid.filters['event'].value['value'] !=""%}
+           <a href="{{ path('admin_nwp_assessment_event_edit', {'id': admin.datagrid.filters['event'].value['value'].id}) }}"> {{admin.datagrid.filters['event'].value['value']}}</a><span class="divider">/</span>
+             <a href="{{ path('nwp.assessment.admin.eventroom_list', {'filter[event][type]': 1, 'filter[event][value]': admin.datagrid.filters['event'].value['value'].id}) }}">Room List for {{admin.datagrid.filters['event'].value['value']}}</a><span class="divider">/</span>
+             Room {{admin.datagrid.filters['gradeLevel'].value['value']}}<span class="divider">/</span>Table List for Room {{admin.datagrid.filters['gradeLevel'].value['value']}}
+        {% endif %}
+    {% endif %} 
+  {% endif %}
+{% elseif '/project/' in currentPath %}
+<a href="{{ path('admin_nwp_assessment_project_list') }}">Projects</a><span class="divider">/</span>
+{% else%}
+    {% if '/login' not in currentPath %}
+    <a href="{{ admin.generateUrl('list') }}">{{ admin.label|trans({}, admin.translationdomain) }}</a><span class="divider">/</span>
+    {% endif %}
+{% endif %}
+{% endblock %}
+
+
+
+{% block footer %}
+     
+{% endblock %}

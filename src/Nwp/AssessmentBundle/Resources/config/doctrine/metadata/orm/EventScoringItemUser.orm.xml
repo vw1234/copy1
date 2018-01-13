@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="EventScoringItemUser" table="event_scoring_item_user">
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="scoringAttempt" type="integer" column="scoring_attempt" nullable="false"/>
+    <field name="timeAssigned" type="datetime" column="time_assigned" nullable="true"/>
+    <many-to-one field="status" target-entity="ScoringItemStatus">
+      <join-columns>
+        <join-column name="status_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="user" target-entity="FosUserUser">
+      <join-columns>
+        <join-column name="user_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="eventScoringItem" target-entity="EventScoringItem">
+      <join-columns>
+        <join-column name="event_scoring_item_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>
